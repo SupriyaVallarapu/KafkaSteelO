@@ -1,8 +1,8 @@
 //import logo from './logo.svg';
 import './App.css';
 import Filetypecsv from './components/Filetypecsv';
-//import Filetypelog from './components/Filetypelog';
-import Filetypeparquet from './components/Filetypeparquet';
+import Filetypelog from './components/Filetypelog';
+//import Filetypeparquet from './components/Filetypeparquet';
 function App() {
   return (
     <div className="App">
@@ -21,7 +21,10 @@ function App() {
         </a>
       </header> */}
       <h4>Parquet Filetype</h4>
-<Filetypeparquet/>{/* <Filetypecsv/> */}
+{/* <Filetypeparquet/>
+ */}
+ <Filetypecsv/>
+ <Filetypelog/>
 
 {/* <h4>Log Filetype</h4>
       <Filetypelog/> */}

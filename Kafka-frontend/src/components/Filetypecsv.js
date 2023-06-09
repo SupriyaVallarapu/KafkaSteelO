@@ -14,18 +14,22 @@ function Filetypecsv() {
       kafka_broker: kafkaBroker,
       kafka_topic: kafkaTopic
     };
-
+    console.log(payload);
     // Make a POST request to the backend API
     fetch('http://localhost:8080/api/csvupload', {
+      
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
+      
     })
+    
       .then(response => {
         if (response.ok) {
           // Handle successful response
+          console.log(payload);
           console.log('Data uploaded successfully!');
         } else {
           // Handle error response
@@ -62,7 +66,6 @@ function Filetypecsv() {
 }
 
 export default Filetypecsv;
-
 
 // import React, { useState } from 'react';
 
