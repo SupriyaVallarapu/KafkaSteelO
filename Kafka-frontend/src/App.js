@@ -1,7 +1,8 @@
 //import logo from './logo.svg';
 import './App.css';
 import Filetypecsv from './components/Filetypecsv';
-import Filetypelog from './components/Filetypelog';
+//import Filetypelog from './components/Filetypelog';
+import Filetypeparquet from './components/Filetypeparquet';
 function App() {
   return (
     <div className="App">
@@ -19,10 +20,11 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <h4>CSV Filetype</h4>
-<Filetypecsv/>
-<h4>Log Filetype</h4>
-      <Filetypelog/>
+      <h4>Parquet Filetype</h4>
+<Filetypeparquet/>{/* <Filetypecsv/> */}
+
+{/* <h4>Log Filetype</h4>
+      <Filetypelog/> */}
     </div>
   );
 }

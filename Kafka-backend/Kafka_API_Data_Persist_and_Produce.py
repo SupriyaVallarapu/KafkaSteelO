@@ -7,7 +7,7 @@ from psycopg2 import sql
 import getpass
 
 # Get user inputs
-api_url = input("Enter the URL of the API: ")
+api_url = input("Enter the URL of the API: (format - https://jsonplaceholder.typicode.com/users):")
 call_api_sec = int(input("How often do you want to call the API in seconds: "))
 kafka_broker = input("Enter the Kafka broker (format - localhost:9092): ")
 kafka_topic = input("Enter the Kafka topic: ")
