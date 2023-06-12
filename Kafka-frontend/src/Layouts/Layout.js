@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
         <Button variant="link" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <MenuIcon style={{ color: "white" }}/>
         </Button>
-        <Navbar.Brand> KakfaSteelO </Navbar.Brand>
+        <Navbar.Brand> KafkaSteelO </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setSidebarOpen(!sidebarOpen)} />
       </Navbar>
       <Container fluid>
