@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import Layout from '../Layouts/Layout';
 
 function Filetypeparquet() {
   const [dataDir, setDataDir] = useState('');
@@ -14,7 +16,7 @@ function Filetypeparquet() {
       data_dir: dataDir,
       kafka_broker: kafkaBroker,
       kafka_topic: kafkaTopic,
-      time_column_name: timecolumnname 
+      time_column_name: timecolumnname
     };
 
     // Make a POST request to the backend API
@@ -39,32 +41,32 @@ function Filetypeparquet() {
       });
   };
 
-  
+
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Directory Path:
-        <input type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Kafka Broker:
-        <input type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Kafka Topic:
-        <input type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Time Column name:
-        <input type="text" value={timecolumnname} onChange={(e) => settimecolumnname(e.target.value)} />
-      </label>
-      <br/>
-      <button type="submit">Upload</button>
-    </form>
+
+
+    <Layout>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId='dataDir'>
+          <Form.Label>Data Directory Path </Form.Label>
+          < Form.Control type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)}></Form.Control>
+        </Form.Group>
+        <Form.Group controlId='kafkaBroker'>
+          <Form.Label>Kafka Broker: </Form.Label>
+          < Form.Control type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)}></Form.Control>
+        </Form.Group>
+        <Form.Group controlId='kafkaTopic'>
+          <Form.Label>Kafka Topic: </Form.Label>
+          < Form.Control type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)}></Form.Control>
+        </Form.Group>
+        <Form.Group controlId='timecolumnname'>
+          <Form.Label>Time Column Name </Form.Label>
+          < Form.Control type="text" value={timecolumnname} onChange={(e) => settimecolumnname(e.target.value)}></Form.Control>
+        </Form.Group>
+        <Button variant='primary' type="submit">Publish</Button>
+      </Form>
+    </Layout>
   );
 }
 

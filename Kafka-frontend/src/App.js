@@ -2,20 +2,23 @@
 import './App.css';
 import Filetypecsv from './components/Filetypecsv';
 import 'bootstrap/dist/css/bootstrap.min.css';
-//import Filetypelog from './components/Filetypelog';
-//import Filetypeparquet from './components/Filetypeparquet';
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+
+import Filetypeapi from './components/Filetypeapi';
+import Filetypeparquet from './components/Filetypeparquet';
 function App() {
   return (
-    <div className="App">
-      {/* <header className="App-header"
-      </header> */}
-      
-{/* <Filetypeparquet/>
- */}
- <Filetypecsv/>
-{/* <h4>Log Filetype</h4>
-      <Filetypelog/> */}
-    </div>
+    <Router>
+    
+    <Routes>
+      <Route exact path="/" element={<Filetypecsv/>} />
+      <Route exact path="/Filetypeapi" element={<Filetypeapi/>} />
+      <Route exact path="/Filetypeparquet" element={<Filetypeparquet/>} />
+      {/* Add more Routes as needed */}
+    </Routes>
+  </Router>
+ 
+   
   );
 }
 
