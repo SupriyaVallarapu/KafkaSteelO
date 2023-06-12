@@ -1,0 +1,53 @@
+.sidebar {
+    height: 100vh; /* Full-height */
+    overflow-y: auto; /* Enable scrolling if the sidenav has too much content */
+    padding: 1em;
+    text-decoration: none;
+    font-family: 'Times New Roman';
+    font-size: larger;
+    padding: 1%;
+  }
+
+  .navbar{
+    height: 50px;
+  }
+
+  .color-white{
+    color: white;
+  }
+  
+  /* Style form labels */
+  form label {
+    font-weight: bold;
+    margin-top: 1em;
+    align-items: flex-start;
+    margin-bottom: 1em;
+    font-family: 'Times New Roman';
+    font-size: larger;
+    margin-left: 1px;
+  }
+  
+  /* Style form controls */
+  form .form-control {
+    margin-bottom: 1em;
+    width: 50%;
+    
+  }
+
+  .form-group-custom {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    
+  }
+    
+  /* Style form buttons */
+  form .btn {
+    margin-top: 1em;
+    width: 20%;
+    float: left;
+    font-family: 'Times New Roman';
+    font-size: larger;
+  }
+
+  

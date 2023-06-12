@@ -1,38 +1,36 @@
 import React, { useState } from 'react';
+import './Filetypecsv.css';
+import { Container, Row, Col, Nav, Form, Button, Navbar, NavbarBrand } from 'react-bootstrap';
+import MenuIcon from '@mui/icons-material/Menu';
 
 function Filetypecsv() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Create a JSON payload with the form data
     const payload = {
       data_dir: dataDir,
       kafka_broker: kafkaBroker,
       kafka_topic: kafkaTopic
     };
     console.log(payload);
-    // Make a POST request to the backend API
+
     fetch('http://localhost:8080/api/csvupload', {
-      
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
-      
     })
-    
       .then(response => {
         if (response.ok) {
-          // Handle successful response
           console.log(payload);
           console.log('Data uploaded successfully!');
         } else {
-          // Handle error response
           console.log('Failed to upload data.');
         }
       })
@@ -41,103 +39,53 @@ function Filetypecsv() {
       });
   };
 
-  
-
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Directory Path:
-        <input type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Kafka Broker:
-        <input type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Kafka Topic:
-        <input type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
-      </label>
-      <br />
-      <button type="submit">Upload</button>
-    </form>
+    <>
+      <Navbar bg="dark" variant="dark" expand="sm">
+      <Button variant="link" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <MenuIcon style={{ color: "white" }}/>
+        </Button>
+        <Navbar.Brand href="#home" > KakfaSteelO
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setSidebarOpen(!sidebarOpen)} />
+      </Navbar>
+      <Container fluid>
+        <Row>
+          {sidebarOpen && (
+            <Col sm={2} className="bg-primary sidebar">
+              <Nav variant="pills" className=" flex-column">
+                <Nav.Item>
+                  <Nav.Link className="text-white" >CSV File</Nav.Link>
+                  <Nav.Link className="text-white" to='/Filetypelog'>Log File</Nav.Link>
+                  <Nav.Link className="text-white">Parquet File</Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Col>
+          )}
+          <Col sm={sidebarOpen ? 9 : 12}>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="directoryPath" className="form-group-custom">
+                <Form.Label>Directory Path:</Form.Label>
+                <Form.Control className="form-control-custom" type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)} />  
+              </Form.Group>
+              <Form.Group controlId="kafkaBroker" className="form-group-custom">
+                <Form.Label>Kafka Broker:</Form.Label>
+                <Form.Control className="form-control-custom" type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
+              </Form.Group>
+              <Form.Group controlId="kafkaTopic" className="form-group-custom">
+                <Form.Label>Kafka Topic:</Form.Label>
+                <Form.Control className="form-control-custom" type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Publish
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }
 
 export default Filetypecsv;
 
-// import React, { useState } from 'react';
-
-// function Filetypecsv() {
-//   const [dataDir, setDataDir] = useState('');
-//   const [kafkaBroker, setKafkaBroker] = useState('');
-//   const [kafkaTopic, setKafkaTopic] = useState('');
-//   const [fileType, setFileType] = useState('csv'); // Default to CSV
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     // Create a JSON payload with the form data
-//     const payload = {
-//       data_dir: dataDir,
-//       kafka_broker: kafkaBroker,
-//       kafka_topic: kafkaTopic
-//     };
-
-//     // Determine the API endpoint based on the selected file type
-//     const apiEndpoint = fileType === 'csv' ? 'http://localhost:8080/api/csvupload' : 'http://localhost:8080/api/logupload';
-
-//     // Make a POST request to the backend API
-//     fetch(apiEndpoint, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify(payload)
-//     })
-//       .then(response => {
-//         if (response.ok) {
-//           // Handle successful response
-//           console.log('Data uploaded successfully!');
-//         } else {
-//           // Handle error response
-//           console.log('Failed to upload data.');
-//         }
-//       })
-//       .catch(error => {
-//         console.error('Error:', error);
-//       });
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <label>
-//         Directory Path:
-//         <input type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)} />
-//       </label>
-//       <br />
-//       <label>
-//         Kafka Broker:
-//         <input type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
-//       </label>
-//       <br />
-//       <label>
-//         Kafka Topic:
-//         <input type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
-//       </label>
-//       <br />
-//       <label>
-//         File Type:
-//         <select value={fileType} onChange={(e) => setFileType(e.target.value)}>
-//           <option value="csv">CSV</option>
-//           <option value="log">Log</option>
-//         </select>
-//       </label>
-//       <br />
-//       <button type="submit">Upload</button>
-//     </form>
-//   );
-// }
-
-// export default Filetypecsv;
