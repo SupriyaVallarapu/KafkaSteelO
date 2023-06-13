@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import Layout from '../Layouts/Layout';
+import Layoutnavbar from '../Layouts/Layoutnavbar';
 
 function Filetypeparquet() {
   const [dataDir, setDataDir] = useState('');
@@ -40,13 +40,8 @@ function Filetypeparquet() {
         console.error('Error:', error);
       });
   };
-
-
-
   return (
-
-
-    <Layout>
+    <Layoutnavbar>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId='dataDir'>
           <Form.Label>Data Directory Path </Form.Label>
@@ -66,7 +61,7 @@ function Filetypeparquet() {
         </Form.Group>
         <Button variant='primary' type="submit">Publish</Button>
       </Form>
-    </Layout>
+    </Layoutnavbar>
   );
 }
 

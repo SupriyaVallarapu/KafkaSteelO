@@ -3,7 +3,7 @@ import { Container, Row, Col, Nav, Button, Navbar, NavbarBrand } from 'react-boo
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 
-const Layout = ({ children }) => {
+const Layoutnavbar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
             <Col sm={2} className="bg-primary sidebar">
               <Nav variant="pills" className=" flex-column">
                 <Nav.Item>
-                  <Nav.Link as={Link} to='/' className="text-white" >CSV File</Nav.Link>
+                  <Nav.Link as={Link} to='/Filetypecsv' className="text-white" >CSV File</Nav.Link>
                   <Nav.Link as={Link} to='/Filetypeapi' className="text-white" >Api File</Nav.Link>
                   <Nav.Link as={Link} to='/Filetypeparquet' className="text-white">Parquet File</Nav.Link>
                 </Nav.Item>
@@ -37,4 +37,4 @@ const Layout = ({ children }) => {
   );
 };
 
-export default Layout;
+export default Layoutnavbar;

@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import './Filetypecsv.css';
-import {  Form, Button } from 'react-bootstrap';
-
-import Layout from '../Layouts/Layout';
+import { Form, Button, Modal } from 'react-bootstrap';
+import Layoutnavbar from '../Layouts/Layoutnavbar';
+import { useNavigate } from "react-router-dom";
 
 function Filetypecsv() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
-
+  const [showPersistDialog, setShowPersistDialog] = useState(false);
+  // const [showSecondForm, setShowSecondForm] = useState(false);
+  const navigate=useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowPersistDialog(true);
 
     const payload = {
       data_dir: dataDir,
@@ -39,8 +42,17 @@ function Filetypecsv() {
       });
   };
 
+ 
+
+  const handlePersistData = (persist) => {
+    setShowPersistDialog(false);
+    if (persist) {
+      navigate('/Persistdataform', { state:{ dataDir, kafkaBroker, kafkaTopic} });
+    }
+  }
+
   return (
-    <Layout>
+    <Layoutnavbar>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="directoryPath" className="form-group-custom">
@@ -60,7 +72,17 @@ function Filetypecsv() {
         </Button>
       </Form>
 
-    </Layout>
+      <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Persist Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Do you want to persist data?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => handlePersistData(false)}>No</Button>
+          <Button variant="primary" onClick={() => handlePersistData(true)}>Yes</Button>
+        </Modal.Footer>
+      </Modal>
+    </Layoutnavbar>
   );
 }
 

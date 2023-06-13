@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-import Layout from '../Layouts/Layout';
+import Layoutnavbar from '../Layouts/Layoutnavbar';
 
 function Filetypeapi() {
   const [apiurl, setapiurl] = useState('');
@@ -44,7 +44,7 @@ function Filetypeapi() {
 
 
   return (
-    <Layout>
+    <Layoutnavbar>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="apiurl">
           <Form.Label>Api URL:</Form.Label>
@@ -63,7 +63,7 @@ function Filetypeapi() {
           Publish
         </Button>
       </Form>
-    </Layout>
+    </Layoutnavbar>
   );
 }
 
