@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import './Filetypecsv.css';
-import { Link } from 'react-router-dom';
+import {  Form, Button } from 'react-bootstrap';
 
-import { Container, Row, Col, Nav, Form, Button, Navbar, NavbarBrand } from 'react-bootstrap';
-import MenuIcon from '@mui/icons-material/Menu';
 import Layout from '../Layouts/Layout';
 
 function Filetypecsv() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
