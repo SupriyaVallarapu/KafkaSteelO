@@ -34,10 +34,12 @@ function Persistdataform() {
         };
 
 
-        fetch('http://localhost:8080/consume_and_persist', {
+        fetch('http://localhost:9000/consume_and_persist', {
             method: 'POST',
+            mode:'cors',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin':'*',
             },
             body: JSON.stringify(payload)
         })

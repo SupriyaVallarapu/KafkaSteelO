@@ -94,7 +94,7 @@
 
 
 from flask import Flask, request
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 from confluent_kafka import Consumer, TopicPartition, KafkaError
 import json
 import psycopg2
@@ -103,7 +103,10 @@ import traceback
 app = Flask(__name__)
 cors=CORS(app)
 
+cors = CORS(app, resources={r"/*": {"origins": ["http://localhost:8081", "http://localhost:3000"]}})
+
 @app.route('/consume_and_persist', methods=['POST'])
+@cross_origin()
 def consume_and_persist():
     # Get the JSON body of the request
     request_body = request.json
@@ -191,4 +194,4 @@ def consume_and_persist():
 
 
 if __name__ == '__main__':
-    app.run(port=8080)
+    app.run(port=9000)

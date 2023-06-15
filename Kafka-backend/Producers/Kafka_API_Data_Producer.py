@@ -3,10 +3,11 @@ from confluent_kafka import Producer
 import requests
 import json
 from flask import Flask, request
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 
 app = Flask(__name__)
 cors = CORS(app)
+cors = CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000"]}})
 
 producer = None
 kafka_broker = None
@@ -14,6 +15,7 @@ kafka_topic = None
 
 
 @app.route('/api/apidata', methods=['POST'])
+@cross_origin
 def api_data():
     global producer, kafka_broker, kafka_topic
 
