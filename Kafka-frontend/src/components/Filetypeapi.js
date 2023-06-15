@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
-
+import { Form, Button, Modal } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 
 function Filetypeapi() {
+
+  const navigate=useNavigate();
   const [apiurl, setapiurl] = useState('');
   //https://jsonplaceholder.typicode.com/users
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
+  const [showPersistDialog, setShowPersistDialog] = useState(false);
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowPersistDialog(true);
 
     // Create a JSON payload with the form data
     const payload = {
@@ -41,6 +46,13 @@ function Filetypeapi() {
       });
   };
 
+  const handlePersistData = (persist) => {
+    setShowPersistDialog(false);
+    if (persist) {
+      navigate('/Persistdataform', { state:{sourceType:'api', apiurl, kafkaBroker, kafkaTopic} });
+    }
+  }
+
 
 
   return (
@@ -63,6 +75,18 @@ function Filetypeapi() {
           Publish
         </Button>
       </Form>
+
+
+      <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Persist Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Do you want to persist data?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => handlePersistData(false)}>No</Button>
+          <Button variant="primary" onClick={() => handlePersistData(true)}>Yes</Button>
+        </Modal.Footer>
+      </Modal>
     </Layoutnavbar>
   );
 }

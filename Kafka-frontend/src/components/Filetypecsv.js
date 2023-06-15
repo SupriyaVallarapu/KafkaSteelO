@@ -47,7 +47,7 @@ function Filetypecsv() {
   const handlePersistData = (persist) => {
     setShowPersistDialog(false);
     if (persist) {
-      navigate('/Persistdataform', { state:{ dataDir, kafkaBroker, kafkaTopic} });
+      navigate('/Persistdataform', { state:{sourceType: 'csv',  dataDir, kafkaBroker, kafkaTopic} });
     }
   }
 

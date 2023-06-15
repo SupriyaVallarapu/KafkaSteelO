@@ -90,101 +90,105 @@
 #         time.sleep(10)
 
 
+
+
+
 from flask import Flask, request
 from flask_cors import CORS
-import time
-from confluent_kafka import Consumer, KafkaError
+from confluent_kafka import Consumer, TopicPartition, KafkaError
 import json
 import psycopg2
 from getpass import getpass
-
+import traceback
 app = Flask(__name__)
 cors=CORS(app)
-@app.route('/api/consume_kafka', methods=['POST'])
-def consume_kafka():
+
+@app.route('/consume_and_persist', methods=['POST'])
+def consume_and_persist():
     # Get the JSON body of the request
     request_body = request.json
 
     # Get the parameters from the JSON body
-    data_source = request_body.get('data_source')
-    kafka_broker = request_body.get('kafka_broker', "localhost:9092")
+    kafka_broker = request_body.get('kafka_broker')
     kafka_topic = request_body.get('kafka_topic')
-    offset = request_body.get('offset', "end")
-    persist_data = request_body.get('persist_data', "no")
-    consumer_group = request_body.get('consumer_group', "testgroup")
+    offset = request_body.get('offset')
 
-    db_name = request_body.get('db_name', "kafka")
-    db_schema = request_body.get('db_schema', "kafkadata")
-    db_user = request_body.get('db_user', "postgres")
-    db_password = request_body.get('db_password', "postgres")
-    db_host = request_body.get('db_host', "localhost")
-    db_port = request_body.get('db_port', "5432")
+    db_name = request_body.get('db_name')
+    db_schema = request_body.get('db_schema')
+    db_user = request_body.get('db_user')
+    db_password = request_body.get('db_password')
+    db_host = request_body.get('db_host')
+    db_port = request_body.get('db_port')
 
-    # Create a consumer to consume data from Kafka
+    # Create a Kafka consumer
     consumer = Consumer({
         'bootstrap.servers': kafka_broker,
-        'group.id': consumer_group,
-        'auto.offset.reset': offset
+        'group.id': 'testgroup',
+        'auto.offset.reset': 'earliest'
     })
 
-    consumer.subscribe([kafka_topic])
-
-
-    def persist_to_timescaleDB(message, cur, conn):
-        # Serialize the message to JSON
-        message_json = json.dumps(message)
-
-        # Persist the data to TimescaleDB
-        cur.execute(
-            f"INSERT INTO {db_schema}.{kafka_topic} (data) VALUES (%s)",
-            (message_json,)
-        )
-        conn.commit()
+    if offset.lower() == 'beginning':
+        consumer.assign([TopicPartition(kafka_topic, 0, 0)])  # Start from the beginning
+    elif offset.lower() == 'end':
+        consumer.assign([TopicPartition(kafka_topic, 0, consumer.get_watermark_offsets(TopicPartition(kafka_topic, 0))[1] - 1)])  # Start from the end
+    else:
+        consumer.assign([TopicPartition(kafka_topic, 0, int(offset))])  # Start from user-defined offset
 
     conn = None
     cur = None
     try:
-        if persist_data.lower() == 'yes':
-            conn = psycopg2.connect(
-                dbname=db_name,
-                user=db_user,
-                password=db_password,
-                host=db_host,
-                port=db_port
-            )
+        # Connect to the database
+        conn = psycopg2.connect(
+            dbname=db_name,
+            user=db_user,
+            password=db_password,
+            host=db_host,
+            port=db_port
+        )
+        cur = conn.cursor()
 
-            cur = conn.cursor()
-            cur.execute(f"""
-                CREATE TABLE IF NOT EXISTS {db_schema}.{kafka_topic} (
-                    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                    data JSONB
-                );
-            """)
-            conn.commit()
+        # Create a table for the Kafka topic if it doesn't exist
+        cur.execute(f"""
+            CREATE TABLE IF NOT EXISTS {db_schema}.{kafka_topic} (
+                timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                data JSONB
+            );
+        """)
+        conn.commit()
 
-        # Consume data from the Kafka topic
-        message = consumer.poll(1.0)
+        # Consume data from Kafka and persist each message to the database
+        while True:
+             msg = consumer.poll(1.0)
+             if msg is None:
+                continue
+             if msg.error():
+                return {"error": f"Consumer error: {msg.error()}"}, 500
+             else:
+                data_type = type(msg.value())
+                print(f"Incoming data type: {data_type}")
+                if data_type == bytes:
+                    try:
+                        cur.execute(
+                            f"INSERT INTO {db_schema}.{kafka_topic} (data) VALUES (%s)",
+                            (json.dumps(msg.value().decode('utf-8')),)
+                        )
+                        conn.commit()
+                    except Exception as e:
+                        traceback_str = traceback.format_exc()
+                        print(f"Error occurred in SQL execution: {traceback_str}")
+                else:
+                    print("Data type not handled.")
 
-        # if a message is received
-        if message is not None:
-            # if the message does not contain error
-            if message.error() is None:
-                message = json.loads(message.value().decode('utf-8'))
-
-                # Persist the data to TimescaleDB
-                persist_to_timescaleDB(message, cur, conn)
-            elif message.error().code() != KafkaError._PARTITION_EOF:
-                return {"error": f"Error occurred: {message.error()}"}, 500
-                if conn:
-                    conn.close()
-                time.sleep(1)
-
-    except Exception as e:
-        return {"error": f"Error occurred: {e}"}, 500
+    except Exception:
+        traceback_str = traceback.format_exc()
+        return {"error": f"Error occurred: {traceback_str}"}, 500
+    finally:
         if conn:
             conn.close()
-        time.sleep(10)
+        consumer.close()
 
-    return {"message": "Data consumed and persisted successfully."}, 200
+        return {"message": "Data consumed and persisted successfully."}, 200
+
+
 if __name__ == '__main__':
     app.run(port=8080)
