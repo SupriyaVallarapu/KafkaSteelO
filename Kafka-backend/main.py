@@ -11,7 +11,7 @@ def run_app(cmd):
     os.system(cmd)
 
 if __name__ == "__main__":
-    producer_command = "python Producers/Kafka_ParquetFile_Data_Producer.py"
+    producer_command = "python Producers/Kafka_CSVFile_Data_Producer.py"
     # producer_command1 = "python Producers/Kafka_API_Data_Producer.py"
     consumer_command = "python Database_Persist_only/Kafka_Database_Persist_Consumer.py"
     
