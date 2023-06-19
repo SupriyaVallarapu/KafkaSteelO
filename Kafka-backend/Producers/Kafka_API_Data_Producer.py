@@ -2,20 +2,22 @@ import time
 from confluent_kafka import Producer
 import requests
 import json
-from flask import Flask, request
+from flask import Flask,Blueprint, request
 from flask_cors import CORS,cross_origin
 
-app = Flask(__name__)
-cors = CORS(app)
-cors = CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000"]}})
+# app = Flask(__name__)
+# cors = CORS(app)
+# cors = CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000"]}})
+api_blueprint = Blueprint('api_blueprint', __name__)
+
 
 producer = None
 kafka_broker = None
 kafka_topic = None
 
 
-@app.route('/api/apidata', methods=['POST'])
-@cross_origin
+@api_blueprint.route('/api/apidata', methods=['POST'])
+
 def api_data():
     global producer, kafka_broker, kafka_topic
 
@@ -67,8 +69,8 @@ def publish_to_kafka(data,producer):
     # Flush the producer
     producer.flush()
 
-if __name__=='__main__':
-    app.run(port=8080)
+# if __name__=='__main__':
+#     app.run(port=8080)
 
 
 # # Get user inputs

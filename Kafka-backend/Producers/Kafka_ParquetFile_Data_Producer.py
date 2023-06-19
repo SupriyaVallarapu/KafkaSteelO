@@ -3,20 +3,21 @@ import time
 import pandas as pd
 from confluent_kafka import Producer
 import json
-from flask import Flask, request
+from flask import Flask, request,Blueprint
 from flask_cors import CORS
 
 
-app = Flask(__name__)
-cors=CORS(app)
+# app = Flask(__name__)
+# cors=CORS(app)
 
+parquet_blueprint = Blueprint('parquet_blueprint', __name__)
 
 producer = None
 processed_files = set()
 kafka_broker = None
 kafka_topic = None
 
-@app.route('/api/parquetupload', methods=['POST'])
+@parquet_blueprint.route('/api/parquetupload', methods=['POST'])
 def upload_parquet():
     global producer, processed_files, kafka_broker, kafka_topic
 
@@ -91,8 +92,8 @@ def process_file(filepath, producer, time_column_name):
         producer.flush()
 
 
-if __name__ == '__main__':
-    app.run(port= 8080)
+# if __name__ == '__main__':
+#     app.run(port= 8080)
     
 # import os
 # import time

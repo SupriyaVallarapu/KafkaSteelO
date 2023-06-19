@@ -71,7 +71,7 @@
 # if __name__ == '__main__':
 #     app.run(port= 8080)
 
-from flask import Flask, request, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from flask_cors import CORS
 import os
 import time
@@ -79,10 +79,15 @@ import pandas as pd
 from confluent_kafka import Producer, KafkaException
 import json
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000"]}})
 
-@app.route('/api/csvupload', methods=['POST'])
+csv_blueprint = Blueprint('csv_blueprint', __name__)
+
+# app = Flask(__name__)
+# CORS(app, resources={
+#      r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000"]}})
+
+
+@csv_blueprint.route('/api/csvupload', methods=['POST'])
 def upload_csv():
     # Get the directory path, Kafka broker, and Kafka topic from the request
     data = request.get_json()
@@ -117,12 +122,14 @@ def upload_csv():
 
     return jsonify({'message': 'CSV Data uploaded to Kafka successfully!'}), 200
 
+
 def create_producer(kafka_broker):
     return Producer({
         'bootstrap.servers': kafka_broker,
         'queue.buffering.max.messages': 10000000,
         'compression.type': 'zstd'
     })
+
 
 def process_file(filepath, producer, kafka_topic):
     # Load the CSV file into a pandas DataFrame
@@ -144,5 +151,6 @@ def process_file(filepath, producer, kafka_topic):
         # Flush any outstanding messages
         producer.flush()
 
-if __name__ == '__main__':
-    app.run(port=8080)
+
+# if __name__ == '__main__':
+#     app.run(port=8080)

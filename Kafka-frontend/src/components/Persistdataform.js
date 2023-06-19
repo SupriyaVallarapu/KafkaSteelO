@@ -36,7 +36,7 @@ function Persistdataform() {
         };
 
 
-        fetch('http://localhost:9000/consume_and_persist', {
+        fetch('http://localhost:8080/consume_and_persist', {
             method: 'POST',
             mode:'cors',
             headers: {
