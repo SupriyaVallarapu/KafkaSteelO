@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Nav, Button, Navbar, NavbarBrand } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Button, Navbar } from 'react-bootstrap';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 
@@ -24,6 +24,7 @@ const Layoutnavbar = ({ children }) => {
                   <Nav.Link as={Link} to='/Filetypecsv' className="text-white" >CSV File</Nav.Link>
                   <Nav.Link as={Link} to='/Filetypeapi' className="text-white" >Api File</Nav.Link>
                   <Nav.Link as={Link} to='/Filetypeparquet' className="text-white">Parquet File</Nav.Link>
+                  <Nav.Link as={Link} to='/Persistdataform' className="text-white">Perist Data</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>

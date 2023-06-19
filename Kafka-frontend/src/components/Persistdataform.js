@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
+//import { useLocation } from 'react-router-dom';
 function Persistdataform() {
 
-    const location = useLocation();
-    const { sourceType, dataDir, kafkaBroker, kafkaTopic, apiurl, timecolumnname} = location.state || {};
+    //const location = useLocation();
+    //const { sourceType, dataDir, kafkaBroker, kafkaTopic, apiurl, timecolumnname} = location.state || {};
+    const [kafkaBroker,setKafkaBroker]=useState('');
+    const [kafkaTopic,setKafkaTopic]=useState('');
     const [dbname, setdbname] = useState('');
     const [dbschema, setdbschema] = useState('');
     const [dbuser, setdbuser] = useState('')
@@ -15,7 +17,7 @@ function Persistdataform() {
     const [dbport, setdbport] = useState('')
     const [offset, setoffset] = useState('')
     const [consumergroup, setconsumergroup] = useState('')
-    const navigate = useNavigate();
+   // const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -61,7 +63,7 @@ function Persistdataform() {
 
         // You can handle the form submission here
         console.log('Form submitted with the following values:');
-        console.log(`Directory Path: ${dataDir}`);
+        // console.log(`Directory Path: ${dataDir}`);
         console.log(`Kafka Broker: ${kafkaBroker}`);
         console.log(`Kafka Topic: ${kafkaTopic}`);
         console.log(`DB Name: ${dbname}`);
@@ -74,7 +76,7 @@ function Persistdataform() {
             <Form onSubmit={handleSubmit}>
                 <h4>Persist Data</h4>
 
-                {sourceType === 'csv' && (
+                {/* {sourceType === 'csv' && (
                     <Form.Group controlId="directoryPath">
                         <Form.Label>Directory Path:</Form.Label>
                         <Form.Control type="text" value={dataDir} readOnly />
@@ -98,14 +100,14 @@ function Persistdataform() {
                             < Form.Control type="text" value={timecolumnname} readOnly></Form.Control>
                         </Form.Group>
                     </Form.Group>
-                )}
+                )} */}
                 <Form.Group controlId="kafkaBroker">
                     <Form.Label>Kafka Broker:</Form.Label>
-                    <Form.Control type="text" value={kafkaBroker} readOnly />
+                    <Form.Control type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="kafkaTopic">
                     <Form.Label>Kafka Topic:</Form.Label>
-                    <Form.Control type="text" value={kafkaTopic} readOnly />
+                    <Form.Control type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbname">
                     <Form.Label>DB Name:</Form.Label>

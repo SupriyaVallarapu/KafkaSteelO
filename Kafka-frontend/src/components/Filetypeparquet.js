@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { Form, Button,Modal } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
 function Filetypeparquet() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
   const [timecolumnname, settimecolumnname] = useState('');
-  const [showPersistDialog, setShowPersistDialog] = useState(false);
-  let navigate=useNavigate();
+  //const [showPersistDialog, setShowPersistDialog] = useState(false);
+  //let navigate=useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
-    setShowPersistDialog(true);
+    //setShowPersistDialog(true);
     // Create a JSON payload with the form data
     const payload = {
       data_dir: dataDir,
@@ -43,12 +43,12 @@ function Filetypeparquet() {
       });
   };
 
-  const handlePersistData = (persist) => {
-    setShowPersistDialog(false);
-    if (persist) {
-      navigate('/Persistdataform', { state: { sourceType: 'parquet', dataDir, kafkaBroker, kafkaTopic, timecolumnname } });
-    }
-  }
+  // const handlePersistData = (persist) => {
+  //   setShowPersistDialog(false);
+  //   if (persist) {
+  //     navigate('/Persistdataform', { state: { sourceType: 'parquet', dataDir, kafkaBroker, kafkaTopic, timecolumnname } });
+  //   }
+  // }
   return (
     <Layoutnavbar>
       <Form onSubmit={handleSubmit}>
@@ -72,7 +72,7 @@ function Filetypeparquet() {
       </Form>
 
 
-      <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
+      {/* <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Persist Data</Modal.Title>
         </Modal.Header>
@@ -81,7 +81,7 @@ function Filetypeparquet() {
           <Button variant="secondary" onClick={() => handlePersistData(false)}>No</Button>
           <Button variant="primary" onClick={() => handlePersistData(true)}>Yes</Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </Layoutnavbar>
   );
 }

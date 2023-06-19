@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import './Filetypecsv.css';
-import { Form, Button, Modal } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 function Filetypecsv() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
-  const [showPersistDialog, setShowPersistDialog] = useState(false);
+  //const [showPersistDialog, setShowPersistDialog] = useState(false);
   // const [showSecondForm, setShowSecondForm] = useState(false);
-  const navigate=useNavigate();
+  //const navigate=useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
-    setShowPersistDialog(true);
+   // setShowPersistDialog(true);
 
     const payload = {
       data_dir: dataDir,
@@ -44,12 +44,12 @@ function Filetypecsv() {
 
  
 
-  const handlePersistData = (persist) => {
-    setShowPersistDialog(false);
-    if (persist) {
-      navigate('/Persistdataform', { state:{sourceType: 'csv',  dataDir, kafkaBroker, kafkaTopic} });
-    }
-  }
+  // const handlePersistData = (persist) => {
+  //   setShowPersistDialog(false);
+  //   if (persist) {
+  //     navigate('/Persistdataform', { state:{sourceType: 'csv',  dataDir, kafkaBroker, kafkaTopic} });
+  //   }
+  // }
 
   return (
     <Layoutnavbar>
@@ -72,7 +72,7 @@ function Filetypecsv() {
         </Button>
       </Form>
 
-      <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
+      {/* <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Persist Data</Modal.Title>
         </Modal.Header>
@@ -81,7 +81,7 @@ function Filetypecsv() {
           <Button variant="secondary" onClick={() => handlePersistData(false)}>No</Button>
           <Button variant="primary" onClick={() => handlePersistData(true)}>Yes</Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </Layoutnavbar>
   );
 }
