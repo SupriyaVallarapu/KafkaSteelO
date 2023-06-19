@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 //import { useNavigate } from "react-router-dom";
 import Layoutnavbar from '../Layouts/Layoutnavbar';
+import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, URLAlert } from '../Alerts/Alerts.js';
 
+
+let id = 0;
 function Filetypeapi() {
 
   //const navigate=useNavigate();
@@ -10,12 +13,23 @@ function Filetypeapi() {
   //https://jsonplaceholder.typicode.com/users
   const [kafkaBroker, setKafkaBroker] = useState('');
   const [kafkaTopic, setKafkaTopic] = useState('');
-  //const [showPersistDialog, setShowPersistDialog] = useState(false);
-  
+  const [alerts, setAlerts] = useState([]);
 
+  const addAlert = (component) => {
+    setAlerts(alerts => [...alerts, { id: id++, component }]);
+  };
+
+  const removeAlert = (id) => {
+    setAlerts(alerts => alerts.filter(alert => alert.id !== id));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    //setShowPersistDialog(true);
+    setAlerts([]);
+
+    if (!apiurl || !kafkaBroker || !kafkaTopic) {
+      addAlert(<EmptyFieldAlert />);
+      return;
+    }
 
     // Create a JSON payload with the form data
     const payload = {
@@ -34,29 +48,37 @@ function Filetypeapi() {
     })
       .then(response => {
         if (response.ok) {
-          // Handle successful response
-          console.log('Api Data uploaded successfully!');
+          return response.json();
         } else {
-          // Handle error response
-          console.log('Failed to upload data.');
+          if (response.status === 500) {
+            // Create a custom alert for HTTP 500 errors
+            addAlert(<URLAlert />);
+            throw new Error('Internal Server Error');
+          }
         }
       })
+      .then(data => {
+        // Handle successful response
+        addAlert(<SuccessfulUploadAlert />);
+      })
       .catch(error => {
-        console.error('Error:', error);
+        if (error.message === 'Internal Server Error') {
+          // We already added a URL alert, so just log the error
+          console.error(error.message);
+        } else {
+          // Other errors
+          console.error('An error occurred:', error);
+          addAlert(<FailedUploadAlert />);
+        }
       });
+
   };
-
-  // const handlePersistData = (persist) => {
-  //   setShowPersistDialog(false);
-  //   if (persist) {
-  //     navigate('/Persistdataform', { state:{sourceType:'api', apiurl, kafkaBroker, kafkaTopic} });
-  //   }
-  // }
-
 
 
   return (
     <Layoutnavbar>
+
+      {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="apiurl">
           <Form.Label>Api URL:</Form.Label>
@@ -75,18 +97,6 @@ function Filetypeapi() {
           Publish
         </Button>
       </Form>
-
-
-      {/* <Modal show={showPersistDialog} onHide={() => handlePersistData(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Persist Data</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Do you want to persist data?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => handlePersistData(false)}>No</Button>
-          <Button variant="primary" onClick={() => handlePersistData(true)}>Yes</Button>
-        </Modal.Footer>
-      </Modal> */}
     </Layoutnavbar>
   );
 }
