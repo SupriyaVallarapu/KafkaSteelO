@@ -1,0 +1,23 @@
+{
+	"connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+	"timestamp.column.name": "timestamp",
+	"connection.password": "******",
+	"validate.non.null": "false",
+	"timestamp.initial": "-1",
+	"tasks.max": "1",
+	"batch.max.rows": "3000",
+	"table.types": "TABLE",
+	"table.poll.interval.ms": "6000",
+	"table.whitelist": "test_data_0",
+	"mode": "timestamp",
+	"key.converter.schemas.enable": "false",
+	"topic.prefix": "mysql",
+	"connection.user": "root",
+	"db.timezone": "UTC",
+	"poll.interval.ms": "1000",
+	"value.converter.schemas.enable": "false",
+	"name": "mysql-source",
+	"connection.url": "jdbc:mysql://docker.for.mac.localhost:3306/kafkadb?enabledTLSProtocols=TLSv1.2&verifyServerCertificate=false&useSSL=false&requireSSL=false",
+	"value.converter": "org.apache.kafka.connect.json.JsonConverter",
+	"key.converter": "org.apache.kafka.connect.json.JsonConverter"
+}
