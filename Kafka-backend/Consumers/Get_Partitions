@@ -1,0 +1,49 @@
+from flask import Flask, jsonify, request
+from confluent_kafka import Consumer, TopicPartition
+
+app = Flask(__name__)
+
+def consume_messages_partitions(consumer_config, topic, partition_nums):
+    consumer = Consumer(consumer_config)
+    partitions = consumer.list_topics(topic).topics[topic].partitions
+
+    partition_ids = [int(partition_id) for partition_id in partition_nums if partition_id.isdigit() and int(partition_id) in partitions.keys()]
+
+    topic_partitions = [TopicPartition(topic, partition_id) for partition_id in partition_ids]
+    consumer.assign(topic_partitions)
+
+    messages = []
+
+    while True:
+        msg = consumer.poll(1.0)
+        if msg is None:
+            break
+        if msg.error():
+            print("Error: {}".format(msg.error()))
+            continue
+
+        message = msg.value().decode('utf-8')
+        messages.append(message)
+
+    consumer.close()
+
+    return messages
+
+
+@app.route('/get_partitions/<partition_nums>/<offset>/<topic>/<group_id>', methods=['GET'])
+def get_partition_messages(partition_nums, offset, topic, group_id):
+    partition_nums = partition_nums.split(',')
+    
+    consumer_config = {
+        'bootstrap.servers': 'localhost:9092',
+        'group.id': group_id,
+        'auto.offset.reset': offset,
+        'enable.auto.commit': False
+    }
+
+    messages = consume_messages_partitions(consumer_config, topic, partition_nums)
+    return jsonify(messages)
+
+
+if __name__ == '__main__':
+    app.run(port=3002)

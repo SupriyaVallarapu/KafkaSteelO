@@ -1,0 +1,50 @@
+from flask import Flask, jsonify
+from confluent_kafka import Consumer, TopicPartition
+
+app = Flask(__name__)
+
+def consume_messages_partition(consumer_config, topic, partition_num):
+   # Get the list of partitions for the topic
+    consumer = Consumer(consumer_config)
+    partitions = consumer.list_topics(topic).topics[topic].partitions
+    # Extract the partition IDs from the partitions dictionary
+    partition_ids = [partition_id for partition_id in partitions.keys()]
+    print(partition_ids[0])
+    consumer.assign([TopicPartition(topic, partition_num)])
+
+    messages = []
+
+    while True:
+        msg = consumer.poll(1.0)
+        if msg is None:
+            break
+        if msg.error():
+            print("Error: {}".format(msg.error()))
+            continue
+
+        message = msg.value().decode('utf-8')
+        messages.append(message)
+
+    consumer.close()
+
+    return messages
+
+
+@app.route('/get_partition/<int:partition_num>/<offset>/<topic>/<group_id>', methods=['GET'])
+def get_partition_messages(partition_num, offset, topic, group_id):
+    consumer_config = {
+        'bootstrap.servers': 'localhost:9092',
+        'group.id': group_id,
+        'auto.offset.reset': offset,
+        'enable.auto.commit': False
+    }
+
+    messages = consume_messages_partition(consumer_config, topic, partition_num)
+    return jsonify(messages)
+
+if __name__ == '__main__':
+    offset = input("Enter offset (earliest or latest): ")
+    topic = input("Enter topic: ")
+    group_id = input("Enter group ID: ")
+    partition_num = int(input("Enter the partition number: "))
+    app.run(port=3002)
