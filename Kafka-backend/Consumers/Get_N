@@ -1,5 +1,6 @@
 #working correctly
-from flask import Flask, jsonify
+import json
+from flask import Flask, Response, jsonify
 from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
@@ -48,7 +49,8 @@ def get_n_messages(n, offset, topic, num_partitions, group_id):
         partition_messages = consume_messages_all(consumer_config, topic, partition, n)
         messages.extend(partition_messages)
 
-    return jsonify(messages)
+    json_data = json.dumps(messages)
+    return Response(json_data, mimetype='application/json')
 
 if __name__ == '__main__':
     offset = input("Enter offset (earliest or latest): ")

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, Response, jsonify
 from confluent_kafka import Consumer, TopicPartition
 import json
 
@@ -56,7 +56,8 @@ def get_messages_by_time_range(offset, topic, group_id, start_time, end_time):
     messages = consume_messages_all(consumer_config, topic)
     found_messages = search_messages_by_time_range(messages, start_time, end_time)
 
-    return jsonify(found_messages)
+    json_data = json.dumps(found_messages)
+    return Response(json_data, mimetype='application/json')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,5 @@
 version: '3'
 
-
 services:
   zoo1:
     image: confluentinc/cp-zookeeper:7.3.2
@@ -65,7 +64,7 @@ services:
       - kafka-network
 
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:7.3.2
+    image: my-kafka-connect-image:latest
     ports:
       - "8083:8083"
     environment:
@@ -82,9 +81,10 @@ services:
       CONNECT_REST_ADVERTISED_HOST_NAME: 'kafka-connect'
       CONNECT_LOG4J_ROOT_LOGLEVEL: 'INFO'
       CONNECT_LOG4J_LOGGERS: 'org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR'
-      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components'
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/opt/kafka/plugins' # Update this line
     networks:
       - kafka-network
+  
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.2
@@ -101,7 +101,7 @@ services:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 8080:8080 # Changed to avoid port clash with akhq
+      - 3001:8080 # Changed to avoid port clash with akhq
     depends_on:
       - kafka1
       - kafka2
@@ -121,3 +121,6 @@ services:
 networks:
   kafka-network:
     driver: bridge
+
+
+

@@ -1,15 +1,15 @@
-#working correctly 
-from flask import Flask, jsonify
+import json
+from flask import Flask, Response
 from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
+
 def consume_messages_all(consumer_config, topic):
     consumer = Consumer(consumer_config)
     messages = []
 
     # Get the list of partitions for the topic
     partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-    print(partitions)
     consumer.assign([TopicPartition(topic, partition) for partition in partitions])
 
     while True:
@@ -21,12 +21,11 @@ def consume_messages_all(consumer_config, topic):
             continue
 
         message = msg.value().decode('utf-8')
-        messages.append(message)
+        messages.append(json.loads(message))  # Parse JSON string into Python object
 
     consumer.close()
 
     return messages
-
 
 @app.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
@@ -38,8 +37,9 @@ def get_all_messages(offset, topic, group_id):
     }
 
     messages = consume_messages_all(consumer_config, topic)
+    json_data = json.dumps(messages)  # Convert Python list to JSON string
 
-    return jsonify(messages)
+    return Response(json_data, mimetype='application/json')
 
 if __name__ == '__main__':
     offset = input("Enter offset (earliest or latest): ")
