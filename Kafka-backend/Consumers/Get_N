@@ -1,4 +1,3 @@
-#working correctly
 import json
 from flask import Flask, Response, jsonify
 from confluent_kafka import Consumer, TopicPartition

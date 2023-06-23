@@ -21,13 +21,14 @@ def consume_messages_all(consumer_config, topic):
             continue
 
         message = msg.value().decode('utf-8')
-        messages.append(json.loads(message)['schema']['fields'] )  # Parse JSON string into Python object
+        payload = json.loads(message)['payload']  # Extract 'payload' from the JSON message
+        messages.append(payload)
 
     consumer.close()
 
     return messages
 
-@app.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
+@app.route('/get/payload/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
