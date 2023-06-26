@@ -1,5 +1,5 @@
 import json
-from flask import Flask, Response, request
+from flask import Flask, Response, jsonify, request
 from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
@@ -128,8 +128,7 @@ def get_partition_and_messages(offset, topic, group_id, n):
         messages = consume_messages_n(consumer, topic, n)
         consumer.close()
 
-    json_data = json.dumps(messages)
-    return Response(json_data, mimetype='application/json')
+    return jsonify(messages)
 
 if __name__ == '__main__':
     app.run(port=3002)

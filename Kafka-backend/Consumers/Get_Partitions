@@ -24,7 +24,7 @@ def consume_messages_partitions(consumer_config, topic, partition_nums):
             continue
 
         message = msg.value().decode('utf-8')
-        messages.append(message)
+        messages.append(json.loads(message))
 
     consumer.close()
 
@@ -41,10 +41,9 @@ def get_partition_messages(partition_nums, offset, topic, group_id):
         'auto.offset.reset': offset,
         'enable.auto.commit': False
     }
-
+ 
     messages = consume_messages_partitions(consumer_config, topic, partition_nums)
-    json_data = json.dumps(messages)
-    return Response(json_data, mimetype='application/json')
+    return jsonify(messages)
 
 
 if __name__ == '__main__':
