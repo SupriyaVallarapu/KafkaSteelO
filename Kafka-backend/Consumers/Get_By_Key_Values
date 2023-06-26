@@ -6,29 +6,39 @@ app = Flask(__name__)
 
 
 def consume_messages_all(consumer_config, topic):
-    consumer = Consumer(consumer_config)
-    messages = []
+    try:
+        consumer = Consumer(consumer_config)
+        messages = []
 
-    # Get the list of partitions for the topic
-    partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
+        topics = consumer.list_topics().topics
+        if topic not in topics:
+             error_message = "topic does not exist."
+             return Response(json.dumps({"error": error_message}), status=400, mimetype='application/json')
+        
+        # Get the list of partitions for the topic
+        partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
 
-    # Assign all partitions to the consumer
-    consumer.assign([TopicPartition(topic, partition) for partition in partitions])
+        # Assign all partitions to the consumer
+        consumer.assign([TopicPartition(topic, partition) for partition in partitions])
 
-    while True:
-        msg = consumer.poll(1.0)
-        if msg is None:
-            break
-        if msg.error():
-            print("Error: {}".format(msg.error()))
-            continue
+        while True:
+            msg = consumer.poll(1.0)
+            if msg is None:
+                break
+            if msg.error():
+                error_message = "Error: {}".format(msg.error())
+                consumer.close()
+                return Response(json.dumps({"error": error_message}), status=500, mimetype='application/json')
 
-        message = msg.value().decode('utf-8')
-        messages.append(message)
+            message = msg.value().decode('utf-8')
+            messages.append(message)
 
-    consumer.close()
+        consumer.close()
 
-    return messages
+        return messages
+    except Exception as e:
+        error_message = "An error occurred while consuming messages: {}".format(str(e))
+        return Response(json.dumps({"error": error_message}), status=500, mimetype='application/json')
 
 
 def search_messages_by_key_value(messages, key, value):
@@ -44,29 +54,44 @@ def search_messages_by_key_value(messages, key, value):
                     value = int(value)
                 if message_value == value:
                     found_messages.append(message_dict)
-        except json.JSONDecodeError:
-            print("Invalid JSON message:", message)
+        except json.JSONDecodeError as e:
+            error_message = "Invalid JSON message: {}".format(str(e))
+            print(error_message)  # or log the error for debugging purposes
 
     return found_messages
 
 
 @app.route('/get/key-value/<offset>/<topic>/<group_id>/<key>/<value>', methods=['GET'])
 def get_messages_by_key_value(offset, topic, group_id, key, value):
-    consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
-        'group.id': group_id,
-        'auto.offset.reset': offset,
-        'enable.auto.commit': False
-    }
+    try:
+        consumer_config = {
+            'bootstrap.servers': 'localhost:9092',
+            'group.id': group_id,
+            'auto.offset.reset': offset,
+            'enable.auto.commit': False
+        }
 
-    messages = consume_messages_all(consumer_config, topic)
-    found_messages = search_messages_by_key_value(messages, key, value)
-    json_data = json.dumps(found_messages)
-    return Response(json_data, mimetype='application/json')
+        # Validate the offset value
+        if offset not in ['earliest', 'latest']:
+            error_message = "Invalid offset value. Must be 'earliest' or 'latest'."
+            return Response(json.dumps({"error": error_message}), status=400, mimetype='application/json')
+
+        messages = consume_messages_all(consumer_config, topic)
+        found_messages = search_messages_by_key_value(messages, key, value)
+        json_data = json.dumps(found_messages)
+        return Response(json_data, mimetype='application/json')
+    except Exception as e:
+        error_message = "An error occurred: {}".format(str(e))
+        return Response(json.dumps({"error": error_message}), status=500, mimetype='application/json')
 
 
 if __name__ == '__main__':
-    offset = input("Enter offset (earliest or latest): ")
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
-    app.run(port=3002)
+    try:
+        offset = input("Enter offset (earliest or latest): ")
+        topic = input("Enter topic: ")
+        group_id = input("Enter group ID: ")
+        # Validate input here and handle potential errors
+        app.run(port=3002)
+    except Exception as e:
+        error_message = "An error occurred: {}".format(str(e))
+        print(error_message)  # or log the error for debugging purposes

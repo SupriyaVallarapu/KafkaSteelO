@@ -5,32 +5,47 @@ import json
 app = Flask(__name__)
 
 def consume_messages_all(consumer_config, topic):
-    consumer = Consumer(consumer_config)
-    messages = []
+    try:
+        consumer = Consumer(consumer_config)
+        messages = []
 
-    # Get the list of partitions for the topic
-    partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-    print(partitions)
-    consumer.assign([TopicPartition(topic, partition) for partition in partitions])
+        # Check if the topic exists
+        topics = consumer.list_topics().topics
+        if topic not in topics:
+            raise Exception("Topic '{}' does not exist".format(topic))
 
-    while True:
-        msg = consumer.poll(1.0)
-        if msg is None:
-            break
-        if msg.error():
-            print("Error: {}".format(msg.error()))
-            continue
+        # Get the list of partitions for the topic
+        partitions = topics[topic].partitions.keys()
+        consumer.assign([TopicPartition(topic, partition) for partition in partitions])
 
-        message = msg.value().decode('utf-8')
-        messages.append(json.loads(message))
+        while True:
+            msg = consumer.poll(1.0)
+            if msg is None:
+                break
+            if msg.error():
+                raise Exception("Kafka error: {}".format(msg.error()))
 
-    consumer.close()
+            message = msg.value().decode('utf-8')
+            messages.append(json.loads(message))
 
-    return messages
+        consumer.close()
+
+        return messages
+    except Exception as e:
+        raise Exception("Failed to consume messages: {}".format(str(e)))
 
 
 @app.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
+    # Validate offset
+    offset = offset.lower()
+    if offset not in ["earliest", "latest"]:
+        return jsonify(error="Invalid offset"), 400
+
+    # Validate topic and group_id
+    if not topic or not group_id:
+        return jsonify(error="Invalid topic or group ID"), 400
+
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
         'group.id': group_id,
@@ -38,12 +53,12 @@ def get_all_messages(offset, topic, group_id):
         'enable.auto.commit': False
     }
 
-    messages = consume_messages_all(consumer_config, topic)
+    try:
+        messages = consume_messages_all(consumer_config, topic)
+        return jsonify(messages)
+    except Exception as e:
+        return jsonify(error="Failed to retrieve messages: {}".format(str(e))), 500
 
-    return jsonify(messages)
 
 if __name__ == '__main__':
-    offset = input("Enter offset (earliest or latest): ")
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
     app.run(port=3002)
