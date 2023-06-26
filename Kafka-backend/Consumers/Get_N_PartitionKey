@@ -4,7 +4,7 @@ from confluent_kafka import Consumer, TopicPartition, OFFSET_BEGINNING, OFFSET_E
 
 app = Flask(__name__)
 
-def consume_messages_all(consumer_config, topic, partition, n, offset):
+def consume_messages_partition(consumer_config, topic, partition, n, offset, partition_key):
     consumer = Consumer(consumer_config)
     consumer.assign([TopicPartition(topic, partition, offset=offset)])
 
@@ -21,8 +21,14 @@ def consume_messages_all(consumer_config, topic, partition, n, offset):
                 continue
 
             message = msg.value().decode('utf-8')
-            messages.append(message)
-            message_count += 1
+            if partition_key is not None:
+                # Check if partition key matches
+                if msg.key() == partition_key.encode('utf-8'):
+                    messages.append(message)
+                    message_count += 1
+            else:
+                messages.append(message)
+                message_count += 1
 
             if n is not None and message_count >= n:
                 break
@@ -34,6 +40,7 @@ def consume_messages_all(consumer_config, topic, partition, n, offset):
         consumer.close()
 
     return messages
+
 
 @app.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'])
 def get_n_messages(offset, topic, group_id, n):
@@ -60,9 +67,9 @@ def get_n_messages(offset, topic, group_id, n):
     for i in range(num_partitions):
         partition = i % num_partitions
         if offset == 'earliest':
-            partition_messages = consume_messages_all(consumer_config, topic, partition, n, OFFSET_BEGINNING)
+            partition_messages = consume_messages_partition(consumer_config, topic, partition, n, OFFSET_BEGINNING, partition_key)
         elif offset == 'latest':
-            partition_messages = consume_messages_all(consumer_config, topic, partition, n, OFFSET_END)
+            partition_messages = consume_messages_partition(consumer_config, topic, partition, n, OFFSET_END, partition_key)
         else:
             return jsonify({'error': 'Invalid offset value. Only "earliest" or "latest" are allowed.'}), 400
 
