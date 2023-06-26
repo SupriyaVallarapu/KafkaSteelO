@@ -53,6 +53,58 @@ def consume_messages_partition(consumer_config, topic, partition_id, partition_k
 
     return messages
 
+def consume_messages_n(consumer, topic, n):
+    messages = []
+
+    # Get the number of partitions for the topic
+    partitions = list(consumer.list_topics(topic).topics[topic].partitions.keys())
+    num_partitions = len(partitions)
+
+    if num_partitions == 1:
+        # If there's only one partition, all messages come from the same partition
+        tp = TopicPartition(topic, partitions[0])
+        consumer.assign([tp])
+        remaining_messages = n
+
+        while remaining_messages > 0:
+            msg = consumer.poll(1.0)
+            if msg is None:
+                break
+            if msg.error():
+                print("Error: {}".format(msg.error()))
+                continue
+
+            message = msg.value().decode('utf-8')
+            messages.append(message)
+            remaining_messages -= 1
+
+    else:
+        messages_per_partition = n // num_partitions
+        remaining_messages = n % num_partitions
+
+        for partition in partitions:
+            tp = TopicPartition(topic, partition)
+            consumer.assign([tp])
+            num_messages = messages_per_partition
+
+            if remaining_messages > 0:
+                num_messages += 1
+                remaining_messages -= 1
+
+            while num_messages > 0:
+                msg = consumer.poll(1.0)
+                if msg is None:
+                    break
+                if msg.error():
+                    print("Error: {}".format(msg.error()))
+                    continue
+
+                message = msg.value().decode('utf-8')
+                messages.append(message)
+                num_messages -= 1
+
+    return messages
+
 @app.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'], defaults={'partition_key': ''})
 @app.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'])
 def get_partition_and_messages(offset, topic, group_id, n):
@@ -65,11 +117,17 @@ def get_partition_and_messages(offset, topic, group_id, n):
         'enable.auto.commit': False
     }
 
-    partition_id = get_partition_id(consumer_config, topic, partition_key)
-    if partition_id is None:
-        return Response("Partition ID not found", status=404)
+    if partition_key:
+        partition_id = get_partition_id(consumer_config, topic, partition_key)
+        if partition_id is None:
+            return Response("Partition ID not found", status=404)
 
-    messages = consume_messages_partition(consumer_config, topic, partition_id, partition_key, n)
+        messages = consume_messages_partition(consumer_config, topic, partition_id, partition_key, n)
+    else:
+        consumer = Consumer(consumer_config)
+        messages = consume_messages_n(consumer, topic, n)
+        consumer.close()
+
     json_data = json.dumps(messages)
     return Response(json_data, mimetype='application/json')
 
