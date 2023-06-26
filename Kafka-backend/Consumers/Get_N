@@ -1,77 +1,76 @@
-import json
-from flask import Flask, Response, jsonify, request
-from confluent_kafka import Consumer, TopicPartition, OFFSET_BEGINNING, OFFSET_END
+from flask import Flask, jsonify
+from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
 
-def consume_messages_all(consumer_config, topic, partition, n, offset):
-    consumer = Consumer(consumer_config)
-    consumer.assign([TopicPartition(topic, partition, offset=offset)])
-
+def consume_messages_n(consumer, topic, n):
     messages = []
-    message_count = 0
 
-    try:
-        while True:
+    # Get the number of partitions for the topic
+    partitions = list(consumer.list_topics(topic).topics[topic].partitions.keys())
+    num_partitions = len(partitions)
+
+    if num_partitions == 1:
+        # If there's only one partition, all messages come from the same partition
+        tp = TopicPartition(topic, partitions[0])
+        consumer.assign([tp])
+        remaining_messages = n
+
+        while remaining_messages > 0:
             msg = consumer.poll(1.0)
             if msg is None:
-                continue
+                break
             if msg.error():
                 print("Error: {}".format(msg.error()))
                 continue
 
             message = msg.value().decode('utf-8')
             messages.append(message)
-            message_count += 1
+            remaining_messages -= 1
 
-            if n is not None and message_count >= n:
-                break
+    else:
+        messages_per_partition = n // num_partitions
+        remaining_messages = n % num_partitions
 
-    except KeyboardInterrupt:
-        pass
+        for partition in partitions:
+            tp = TopicPartition(topic, partition)
+            consumer.assign([tp])
+            num_messages = messages_per_partition
 
-    finally:
-        consumer.close()
+            if remaining_messages > 0:
+                num_messages += 1
+                remaining_messages -= 1
+
+            while num_messages > 0:
+                msg = consumer.poll(1.0)
+                if msg is None:
+                    break
+                if msg.error():
+                    print("Error: {}".format(msg.error()))
+                    continue
+
+                message = msg.value().decode('utf-8')
+                messages.append(message)
+                num_messages -= 1
 
     return messages
 
-@app.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'])
-def get_n_messages(offset, topic, group_id, n):
-    partition_key = request.args.get('partition_key')
 
-    if topic is None or group_id is None:
-        return jsonify({'error': 'Topic and group ID are required.'}), 400
-
+@app.route('/get/<topic>/<consumer>/<int:n>', methods=['GET'])
+def get_messages(topic, consumer, n):
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
-        'group.id': group_id,
-        'auto.offset.reset': offset  
+        'group.id': consumer,
+        'auto.offset.reset': 'earliest',
+        'enable.auto.commit': False
     }
 
     consumer = Consumer(consumer_config)
-    partitions = consumer.list_topics(topic).topics[topic].partitions
-    num_partitions = len(partitions)
-
-    if num_partitions < 1:
-        return jsonify({'error': 'Number of partitions should be greater than or equal to 1.'}), 400
-
-    messages = []
-
-    for i in range(num_partitions):
-        partition = i % num_partitions
-        if offset == 'earliest':
-            partition_messages = consume_messages_all(consumer_config, topic, partition, n, OFFSET_BEGINNING)
-        elif offset == 'latest':
-            partition_messages = consume_messages_all(consumer_config, topic, partition, n, OFFSET_END)
-        else:
-            return jsonify({'error': 'Invalid offset value. Only "earliest" or "latest" are allowed.'}), 400
-
-        messages.extend(partition_messages)
-
+    messages = consume_messages_n(consumer, topic, n)
     consumer.close()
 
-    json_data = json.dumps(messages)
-    return Response(json_data, mimetype='application/json')
+    return jsonify(messages)
+
 
 if __name__ == '__main__':
     app.run(port=3002)
