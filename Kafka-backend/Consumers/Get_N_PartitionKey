@@ -44,7 +44,7 @@ def consume_messages_partition(consumer_config, topic, partition_id, partition_k
         message_key = msg.key().decode('utf-8')
         if message_key == partition_key:
             message_value = msg.value().decode('utf-8')
-            messages.append(message_value)
+            messages.append(json.loads(message_value))
 
             if len(messages) >= n:
                 break
@@ -74,8 +74,8 @@ def consume_messages_n(consumer, topic, n):
                 print("Error: {}".format(msg.error()))
                 continue
 
-            message = msg.value().decode('utf-8')
-            messages.append(message)
+            message_value = msg.value().decode('utf-8')
+            messages.append(json.loads(message_value))
             remaining_messages -= 1
 
     else:
@@ -99,8 +99,8 @@ def consume_messages_n(consumer, topic, n):
                     print("Error: {}".format(msg.error()))
                     continue
 
-                message = msg.value().decode('utf-8')
-                messages.append(message)
+                message_value = msg.value().decode('utf-8')
+                messages.append(json.loads(message_value))
                 num_messages -= 1
 
     return messages
