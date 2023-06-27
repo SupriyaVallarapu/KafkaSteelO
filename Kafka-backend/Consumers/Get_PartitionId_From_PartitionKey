@@ -1,4 +1,5 @@
-from flask import Flask, jsonify
+import json
+from flask import Flask, Response, jsonify
 from confluent_kafka import KafkaError, KafkaException, Consumer, TopicPartition
 from confluent_kafka.admin import AdminClient
 
@@ -38,7 +39,9 @@ def get_partition_id_endpoint(topic, partition_key, group_id):
             'enable.auto.commit': False
         }
         partition_id = get_partition_id(consumer_config, topic, partition_key)
-        return jsonify(partition_id)
+        json_data = json.dumps(partition_id)
+        return Response(json_data, mimetype='application/json')
+
 
 if __name__ == '__main__':
     offset = input("Enter offset (earliest or latest): ")

@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+import json
+from flask import Flask, Response, jsonify, request
 from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
@@ -23,7 +24,7 @@ def consume_messages_partitions(consumer_config, topic, partition_nums):
             continue
 
         message = msg.value().decode('utf-8')
-        messages.append(message)
+        messages.append(json.loads(message))
 
     consumer.close()
 
@@ -40,7 +41,7 @@ def get_partition_messages(partition_nums, offset, topic, group_id):
         'auto.offset.reset': offset,
         'enable.auto.commit': False
     }
-
+ 
     messages = consume_messages_partitions(consumer_config, topic, partition_nums)
     return jsonify(messages)
 

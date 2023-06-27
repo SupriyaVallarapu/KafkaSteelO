@@ -1,16 +1,15 @@
 import json
-from flask import Flask, Response, jsonify
+from flask import Flask, Response
 from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
+
 def consume_messages_all(consumer_config, topic):
     consumer = Consumer(consumer_config)
     messages = []
 
     # Get the list of partitions for the topic
     partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-    print(partitions)
-    # Assign all partitions to the consumer
     consumer.assign([TopicPartition(topic, partition) for partition in partitions])
 
     while True:
@@ -22,24 +21,26 @@ def consume_messages_all(consumer_config, topic):
             continue
 
         message = msg.value().decode('utf-8')
-        messages.append(json.loads(message))
+        payload = json.loads(message)['payload']  # Extract 'payload' from the JSON message
+        messages.append(payload)
 
     consumer.close()
 
     return messages
 
-@app.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
+@app.route('/get/payload/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
         'group.id': group_id,
         'auto.offset.reset': offset,
-        'enable.auto.commit': True
+        'enable.auto.commit': False
     }
 
     messages = consume_messages_all(consumer_config, topic)
+    json_data = json.dumps(messages)  # Convert Python list to JSON string
 
-    return jsonify(messages)
+    return Response(json_data, mimetype='application/json')
 
 if __name__ == '__main__':
     offset = input("Enter offset (earliest or latest): ")

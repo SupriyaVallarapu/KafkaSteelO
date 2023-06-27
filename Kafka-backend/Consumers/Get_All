@@ -1,8 +1,9 @@
-#working correctly 
 from flask import Flask, jsonify
 from confluent_kafka import Consumer, TopicPartition
+import json
 
 app = Flask(__name__)
+
 def consume_messages_all(consumer_config, topic):
     consumer = Consumer(consumer_config)
     messages = []
@@ -21,7 +22,7 @@ def consume_messages_all(consumer_config, topic):
             continue
 
         message = msg.value().decode('utf-8')
-        messages.append(message)
+        messages.append(json.loads(message))
 
     consumer.close()
 
