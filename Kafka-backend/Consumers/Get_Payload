@@ -1,5 +1,5 @@
 import json
-from flask import Flask, Response
+from flask import Flask, Response, abort
 from confluent_kafka import Consumer, TopicPartition
 
 app = Flask(__name__)
@@ -7,6 +7,9 @@ app = Flask(__name__)
 def consume_messages_all(consumer_config, topic):
     consumer = Consumer(consumer_config)
     messages = []
+    topics = consumer.list_topics().topics
+    if topic not in topics:
+                raise Exception("Topic '{}' does not exist".format(topic))
 
     # Get the list of partitions for the topic
     partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
@@ -30,6 +33,14 @@ def consume_messages_all(consumer_config, topic):
 
 @app.route('/get/payload/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
+    # Validate inputs
+    if not offset or not topic or not group_id:
+        abort(400, 'Missing required parameters.')
+
+    offset = offset.lower()
+    if offset not in ['earliest', 'latest']:
+        abort(400, 'Invalid offset.')
+
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
         'group.id': group_id,
@@ -37,10 +48,24 @@ def get_all_messages(offset, topic, group_id):
         'enable.auto.commit': False
     }
 
-    messages = consume_messages_all(consumer_config, topic)
-    json_data = json.dumps(messages)  # Convert Python list to JSON string
+    try:
+        messages = consume_messages_all(consumer_config, topic)
+        json_data = json.dumps(messages)  # Convert Python list to JSON string
+        return Response(json_data, mimetype='application/json')
+    except Exception as e:
+        abort(500, 'An error occurred while consuming messages.')
 
-    return Response(json_data, mimetype='application/json')
+@app.errorhandler(400)
+def bad_request(error):
+    response = Response(json.dumps({'error': error.description}), mimetype='application/json')
+    response.status_code = 400
+    return response
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    response = Response(json.dumps({'error': error.description}), mimetype='application/json')
+    response.status_code = 500
+    return response
 
 if __name__ == '__main__':
     app.run(port=3002)
