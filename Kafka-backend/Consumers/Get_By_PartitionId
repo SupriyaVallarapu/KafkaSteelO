@@ -1,11 +1,27 @@
 import json
-from flask import Flask, Response, jsonify
-from confluent_kafka import Consumer, TopicPartition
+from functools import wraps
+from flask import Flask, Response, jsonify, abort
+from confluent_kafka import Consumer, KafkaException, TopicPartition
 
 app = Flask(__name__)
 
+def handle_errors(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except KafkaException as e:
+            abort(500, f"Kafka Exception: {str(e)}")
+        except Exception as e:
+            abort(500, str(e))
+    return decorated_function
+
+def validate_offset(offset):
+    valid_offsets = ['earliest', 'latest']
+    if offset not in valid_offsets:
+        abort(400, "Invalid offset. Must be earliest or latest.")
+
 def consume_messages_partition(consumer_config, topic, partition_num):
-   # Get the list of partitions for the topic
     consumer = Consumer(consumer_config)
     partitions = consumer.list_topics(topic).topics[topic].partitions
     consumer.assign([TopicPartition(topic, partition_num)])
@@ -27,9 +43,10 @@ def consume_messages_partition(consumer_config, topic, partition_num):
 
     return messages
 
-
 @app.route('/get_partition/<int:partition_num>/<offset>/<topic>/<group_id>', methods=['GET'])
+@handle_errors
 def get_partition_messages(partition_num, offset, topic, group_id):
+    validate_offset(offset)
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
         'group.id': group_id,
