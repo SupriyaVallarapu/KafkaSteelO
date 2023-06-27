@@ -1,5 +1,5 @@
 import json
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, abort
 from confluent_kafka import KafkaError, KafkaException, Consumer, TopicPartition
 from confluent_kafka.admin import AdminClient
 
@@ -32,16 +32,36 @@ def get_partition_id(consumer_config, topic, partition_key):
 
 @app.route('/get_partition_id/<topic>/<partition_key>/<group_id>', methods=['GET'])
 def get_partition_id_endpoint(topic, partition_key, group_id):
-        consumer_config = {
-            'bootstrap.servers': 'localhost:9092',
-            'group.id': group_id,
-            'auto.offset.reset': 'earliest',
-            'enable.auto.commit': False
-        }
-        partition_id = get_partition_id(consumer_config, topic, partition_key)
-        json_data = json.dumps(partition_id)
-        return Response(json_data, mimetype='application/json')
+    # Validate inputs
+    if not topic or not partition_key or not group_id:
+        abort(400, 'Missing required parameters.')
 
+    consumer_config = {
+        'bootstrap.servers': 'localhost:9092',
+        'group.id': group_id,
+        'auto.offset.reset': 'earliest',
+        'enable.auto.commit': False
+    }
+    partition_id = get_partition_id(consumer_config, topic, partition_key)
+
+    if partition_id is None:
+        abort(404, 'Partition not found.')
+
+    json_data = json.dumps(partition_id)
+    return Response(json_data, mimetype='application/json')
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    response = jsonify({'error': error.description})
+    response.status_code = 400
+    return response
+
+@app.errorhandler(404)
+def not_found(error):
+    response = jsonify({'error': error.description})
+    response.status_code = 404
+    return response
 
 if __name__ == '__main__':
     app.run(port=3002)
