@@ -48,6 +48,4 @@ def get_latest_message_schema(topic, group_id):
         return Response(status=404)
 
 if __name__ == '__main__':
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
     app.run(port=3002)

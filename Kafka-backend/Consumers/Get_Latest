@@ -42,7 +42,4 @@ def get_all_messages(offset, topic, group_id):
     return jsonify(messages)
 
 if __name__ == '__main__':
-    offset = input("Enter offset (earliest or latest): ")
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
     app.run(port=3002)
