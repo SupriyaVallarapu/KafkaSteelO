@@ -86,12 +86,5 @@ def get_messages_by_key_value(offset, topic, group_id, key, value):
 
 
 if __name__ == '__main__':
-    try:
-        offset = input("Enter offset (earliest or latest): ")
-        topic = input("Enter topic: ")
-        group_id = input("Enter group ID: ")
-        # Validate input here and handle potential errors
         app.run(port=3002)
-    except Exception as e:
-        error_message = "An error occurred: {}".format(str(e))
-        print(error_message)  # or log the error for debugging purposes
+

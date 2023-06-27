@@ -42,8 +42,4 @@ def get_partition_messages(partition_num, offset, topic, group_id):
     return jsonify(json_data)
 
 if __name__ == '__main__':
-    offset = input("Enter offset (earliest or latest): ")
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
-    partition_num = int(input("Enter the partition number: "))
     app.run(port=3002)

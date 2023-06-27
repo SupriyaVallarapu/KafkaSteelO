@@ -61,7 +61,4 @@ def get_messages_by_time_range(offset, topic, group_id, start_time, end_time):
 
 
 if __name__ == '__main__':
-    offset = input("Enter offset (earliest or latest): ")
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
     app.run(port=3002)
