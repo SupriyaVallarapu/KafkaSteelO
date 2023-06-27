@@ -1,16 +1,19 @@
 {
+	"name":"postgresdata",
+	"config":{
 	"connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
 	"incrementing.column.name": "id",
-	"connection.password": "******",
+	"connection.password": "postgres",
 	"validate.non.null": "false",
 	"mode": "incrementing",
 	"key.converter.schemas.enable": "false",
 	"topic.prefix": "postgresjdbc",
 	"connection.user": "postgres",
 	"value.converter.schemas.enable": "false",
-	"name": "postgres-jdbc-source",
-	"connection.url": "jdbc:postgresql://docker.for.mac.localhost:5432/kafka",
-	"table.include.list": "kafkadata.test_data_0,kafkadata.test_data_1,kafkadata.test_data_2",
+	"connection.url": "jdbc:postgresql://docker.for.mac.localhost:5432/postgres",
+	"table.whitelist": "kfk.test_data_0,kfk.test_data_1,kfk.test_data_2",
 	"value.converter": "org.apache.kafka.connect.json.JsonConverter",
 	"key.converter": "org.apache.kafka.connect.json.JsonConverter"
+}
+	
 }

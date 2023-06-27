@@ -1,0 +1,16 @@
+{
+	"connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+	"timestamp.column.name": "MODIFICATION_DATE",
+	"connection.password": "******",
+	"validate.non.null": "false",
+	"table.whitelist": "CODES,DELAYS",
+	"mode": "timestamp",
+	"key.converter.schemas.enable": "false",
+	"topic.prefix": "oracle.kafka.oracldata.",
+	"connection.user": "MASTERDATA",
+	"value.converter.schemas.enable": "false",
+	"name": "oracle_jdbc",
+	"connection.url": "jdbc:oracle:thin:@//10.172.251.67:1521/L3PROD",
+	"value.converter": "org.apache.kafka.connect.json.JsonConverter",
+	"key.converter": "org.apache.kafka.connect.json.JsonConverter"
+}

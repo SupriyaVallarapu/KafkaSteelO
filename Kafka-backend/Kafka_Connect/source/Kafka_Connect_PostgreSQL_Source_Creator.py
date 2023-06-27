@@ -51,7 +51,7 @@ def create_kafka_source():
     config_json = json.dumps(config_dict)
 
     # Define Kafka Connect URL
-    kafka_connect_url = "jdbc:postgresql://docker.for.mac.localhost:5432/kafka" # Update to your Kafka Connect URL if different
+    kafka_connect_url = "http://localhost:8083/connectors" # Update to your Kafka Connect URL if different
 
     # Send POST request
     response = requests.post(kafka_connect_url, headers={"Content-Type": "application/json"}, data=config_json)

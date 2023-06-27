@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState ,useRef} from 'react';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Form, Button } from 'react-bootstrap';
 //import { useNavigate } from 'react-router-dom';
 //import { useLocation } from 'react-router-dom';
+import {
+    SuccessfulUploadAlert,
+    FailedUploadAlert,
+    EmptyFieldAlert,
+    RequestBodyErrorAlert,
+    DBConnectionErrorAlert,
+    CreateTableErrorAlert,
+    TopicNotFoundErrorAlert,
+    UnexpectedErrorAlert
+} from '../Alerts/Alerts.js';
+
+let id = 0;
 function Persistdataform() {
 
     //const location = useLocation();
     //const { sourceType, dataDir, kafkaBroker, kafkaTopic, apiurl, timecolumnname} = location.state || {};
-    const [kafkaBroker,setKafkaBroker]=useState('');
-    const [kafkaTopic,setKafkaTopic]=useState('');
+    const [kafkaBroker, setKafkaBroker] = useState('');
+    const [kafkaTopic, setKafkaTopic] = useState('');
     const [dbname, setdbname] = useState('');
     const [dbschema, setdbschema] = useState('');
     const [dbuser, setdbuser] = useState('')
@@ -17,10 +29,28 @@ function Persistdataform() {
     const [dbport, setdbport] = useState('')
     const [offset, setoffset] = useState('')
     const [consumergroup, setconsumergroup] = useState('')
-   // const navigate = useNavigate();
+    const [data, setData] = useState('');
+    const [alerts, setAlerts] = useState([]);
+    const endpointRef = useRef(0);
+    // const navigate = useNavigate();
+    const addAlert = (component) => {
+        setAlerts(alerts => [...alerts, { id: id++, component }]);
+    };
 
+    const removeAlert = (id) => {
+        setAlerts(alerts => alerts.filter(alert => alert.id !== id));
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        setAlerts([]);  // Clear previous alerts
+
+        if (!kafkaBroker || !kafkaTopic || !dbname || !dbschema || !dbuser || !dbpassword || !dbhost || !dbport || !offset || !consumergroup) {
+            addAlert(<EmptyFieldAlert />);
+            return;
+        }
+
+        
 
         const payload = {
             kafka_broker: kafkaBroker,
@@ -34,27 +64,54 @@ function Persistdataform() {
             offset: offset,
             consumer_group: consumergroup
         };
+        const apiEndpoint = endpointRef.current === 0 ? 
+            `http://localhost:8080/api/consume_and_persist_opcua` : 
+            `http://localhost:8080/api/consume_and_persist`;
 
+        // After using an endpoint, switch to the other one
+        endpointRef.current = endpointRef.current === 0 ? 1 : 0;
 
-        fetch('http://localhost:8080/consume_and_persist', {
+        fetch(apiEndpoint, {
             method: 'POST',
-            mode:'cors',
+            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin':'*',
+                'Access-Control-Allow-Origin': '*',
             },
             body: JSON.stringify(payload)
         })
             .then(response => {
                 if (response.ok) {
-
-                    console.log('Data consumed and persisted successfully!');
+                    addAlert(<SuccessfulUploadAlert />);
                 } else {
-                    console.log('Failed to consume and persist data.');
+                    console.log(response);
+                    throw response;
+                    
+
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
+            .catch(errorResponse => {
+                if (errorResponse.json) {
+                    
+                    errorResponse.json().then(error => {
+                        if (error.error.startsWith('Error parsing request body')) {
+                            addAlert(<RequestBodyErrorAlert />);
+                        } else if (error.error.startsWith('Error connecting to database')) {
+                            addAlert(<DBConnectionErrorAlert />);
+                        } else if (error.error.startsWith('Error creating table')) {
+                            addAlert(<CreateTableErrorAlert />);
+                        }
+                        else if (error.error === "Kafka topic doesn't exist") {
+                            addAlert(<TopicNotFoundErrorAlert />);
+                        } else {
+                            addAlert(<UnexpectedErrorAlert />);
+                        }
+
+                    });
+                } else {
+                    console.error('An error occurred:', errorResponse);
+                    addAlert(<FailedUploadAlert />);
+                }
             });
 
         //navigate('/Filetypecsv');
@@ -73,6 +130,7 @@ function Persistdataform() {
     return (
         <Layoutnavbar>
 
+            {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
             <Form onSubmit={handleSubmit}>
                 <h4>Persist Data</h4>
 
@@ -140,6 +198,14 @@ function Persistdataform() {
                 <Form.Group controlId="consumergroup">
                     <Form.Label>Consumer Group</Form.Label>
                     <Form.Control type="text" value={consumergroup} onChange={(e) => setconsumergroup(e.target.value)} />
+                </Form.Group>
+                <Form.Group controlId="dataType">
+                    <Form.Label>Choose which data to Persist?:</Form.Label>
+                    <Form.Control as="select" value={data} onChange={(e) => setData(e.target.value)}>
+                        <option value="">Select</option>
+                        <option value="opcua">Persist OPCUA Data</option>
+                        <option value="normal">Persist CSV/API/Parquet Data</option>
+                    </Form.Control>
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     Publish

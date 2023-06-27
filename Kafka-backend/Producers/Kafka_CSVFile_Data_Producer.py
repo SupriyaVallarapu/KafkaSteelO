@@ -56,7 +56,7 @@ def create_producer(kafka_broker):
 
 def process_file(filepath, producer, kafka_topic):
     # Load the CSV file into a pandas DataFrame
-    df = pd.read_csv(filepath)
+    df = pd.read_csv(filepath, encoding='ISO-8859-1')
 
     try:
         for _, row in df.iterrows():

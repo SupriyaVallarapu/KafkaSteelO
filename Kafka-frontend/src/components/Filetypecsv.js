@@ -1,17 +1,3 @@
-
- 
-
-//   // const handlePersistData = (persist) => {
-//   //   setShowPersistDialog(false);
-//   //   if (persist) {
-//   //     navigate('/Persistdataform', { state:{sourceType: 'csv',  dataDir, kafkaBroker, kafkaTopic} });
-//   //   }
-//   // }
-
-// }
-
-// export default Filetypecsv;
-
 import React, { useState } from 'react';
 import './Filetypecsv.css';
 import { Form, Button } from 'react-bootstrap';
