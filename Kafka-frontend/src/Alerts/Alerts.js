@@ -24,3 +24,28 @@ export function URLAlert({ onClose }) {
 export function NoFilesInPathAlert({ onClose }) {
     return <Alert variant="info" onClose={onClose} dismissible>No files are present in the provided directory.</Alert>;
 }
+
+export function RequestBodyErrorAlert({ onClose }) {
+    return <Alert variant="warning" onClose={onClose} dismissible>Error parsing request body.</Alert>;
+}
+
+export function DBConnectionErrorAlert({ onClose }) {
+    return <Alert variant="danger" onClose={onClose} dismissible>Error connecting to database.</Alert>;
+}
+
+export function CreateTableErrorAlert({ onClose }) {
+    return <Alert variant="danger" onClose={onClose} dismissible>Error creating table.</Alert>;
+}
+
+export function TopicNotFoundErrorAlert({ onClose }) {
+    return <Alert variant="danger" onClose={onClose} dismissible>Topic not found in Kafka.</Alert>;
+}
+
+
+export function UnexpectedErrorAlert({ onClose }) {
+    return <Alert variant="danger" onClose={onClose} dismissible>An unknown error occurred.</Alert>;
+}
+
+export function OpcuaURLconnectAlert({onClose}){
+    return <Alert variant="warning" onClose={onClose} dismissible>Could not connect to URL </Alert>
+}

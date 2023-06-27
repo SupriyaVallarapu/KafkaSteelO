@@ -1,0 +1,18 @@
+{
+    "name": "mssql_jdbc",
+    "config":{
+        "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+        "incrementing.column.name": "id",
+        "connection.password": "SMSds123",
+        "validate.non.null": "false",
+        "mode": "incrementing",
+        "key.converter.schemas.enable": "false",
+        "topic.prefix": "mssql.kafka.mssqldata.",
+        "connection.user": "smsVSupriya",
+        "value.converter.schemas.enable": "false",
+        "connection.url": "jdbc:sqlserver://10.172.251.2:1433;databaseName=BRSDB",
+        "table.include.list": "BRSPL.M_TM1_TENSION,BRSPL.M_TM2_TENSION,BRSPL.M_TM3_TENSION",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter"
+    }
+}

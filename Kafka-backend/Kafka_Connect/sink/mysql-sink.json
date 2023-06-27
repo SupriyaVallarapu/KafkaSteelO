@@ -1,0 +1,16 @@
+{
+    "name": "mysql-sink",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "key.converter.schemas.enable": "false",
+        "connection.password": "******",
+        "connection.user": "root",
+        "topics": "postgres-1.data_gen.test_data_0,postgres-1.data_gen.test_data_1,postgres-1.data_gen.test_data_2",
+        "value.converter.schemas.enable": "false",
+        "name": "mysql-sink",
+        "auto.create": "true",
+        "connection.url": "jdbc:mysql://docker.for.mac.localhost:3306/kafkadb",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter"
+    }
+}

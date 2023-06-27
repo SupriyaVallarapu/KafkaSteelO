@@ -1,0 +1,15 @@
+{
+    "name": "MongoSinkConnector",
+    "config": {
+      "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+      "tasks.max": "1",
+      "topics": "postgres.kafka.kafkadata.my_table",
+      "connection.uri": "mongodb://root:mongodb@docker.for.mac.localhost:27017",
+      "database": "kafka",
+      "collection": "opcua",
+      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "false"
+    }
+  }
+  

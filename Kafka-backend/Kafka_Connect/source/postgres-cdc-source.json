@@ -1,0 +1,22 @@
+{
+  "name": "Postgres_Data_Gen",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.user": "postgres",
+    "database.dbname": "postgres",
+    "topic.creation.default.partitions": "6",
+    "slot.name": "slotN",
+    "database.server.name": "postgres.docker.for.mac.localhost:postgres.5432/postgres.postgres",
+    "database.port": "5432",
+    "plugin.name": "pgoutput",
+    "key.converter.schemas.enable": "true",
+    "topic.prefix": "postgresprefix",
+    "database.hostname": "docker.for.mac.localhost",
+    "database.password": "******",
+    "value.converter.schemas.enable": "true",
+    "topic.creation.default.replication.factor": "3",
+    "table.include.list": "data_gen.test_data_0,data_gen.test_data_1,data_gen.test_data_2",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter"
+  }
+}
