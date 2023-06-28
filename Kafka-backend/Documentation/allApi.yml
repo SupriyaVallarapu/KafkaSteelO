@@ -7,7 +7,7 @@ servers:
 paths:
   /get/all/{offset}/{topic}/{group_id}:
     get:
-      summary: Get all Kafka messages
+      summary: Get all messages from a topic in Kafka 
       parameters:
         - name: offset
           in: path
@@ -54,40 +54,181 @@ paths:
                 properties:
                   error:
                     type: string
-
-  /get/time-range/earliest/parquet1/group1/2023-05-01T00:00:20.010000/2023-05-01T00:00:20.010000:
+  /get/{offset}/{topic}/{group_id}:
     get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/time-range/earliest/parquet1/group1/2023-05-01T00:00:20.010000/2023-05-01T00:00:20.010000
-      description: Get by Timestamps
+      summary: Get latest messages - set offset as latest
+      parameters:
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          required: true
+          schema:
+            type: string
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Successful response
+          description: Successful operation
           content:
-            application/json: {}
-  /get/key-value/earliest/csv2/group1/Year/2021:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Failed to retrieve messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /get/time-range/{offset}/{topic}/{group_id}/{start_time}/{end_time}:
     get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/key-value/earliest/csv10/group1/Year/2021
-      description: Key-Value
+      summary: Get messages within a time range from a topic
+      parameters:
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          required: true
+          schema:
+            type: string
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+        - name: start_time
+          in: path
+          description: The start time of the time range in ISO 8601 format
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: path
+          description: The end time of the time range in ISO 8601 format
+          required: true
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
-          description: Successful response
+          description: Successful operation
           content:
-            application/json: {}
-  /get/all/latest/csvlatest/new:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Failed to retrieve messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /get/key-value/{offset}/{topic}/{group_id}/{key}/{value}:
     get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/all/latest/newprod/newcons
-      description: 'latest messages added '
+      summary: Get messages by key-value pair
+      parameters:
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          required: true
+          schema:
+            type: string
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+        - name: key
+          in: path
+          description: The key to search for in the messages
+          required: true
+          schema:
+            type: string
+        - name: value
+          in: path
+          description: The value to match with the specified key
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Successful response
+          description: Successful operation
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Failed to retrieve messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  
+  
   /get/name-time-range/earliest/opctopic2/groupn/2023-05-01T00:11:51.310000/2023-05-01T00:34:32.610000/Stand 1 - Bottom Scratch Brush Oscillating B:
     get:
       tags:

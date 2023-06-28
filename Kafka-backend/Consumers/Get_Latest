@@ -35,7 +35,7 @@ def consume_messages_all(consumer_config, topic):
         raise Exception("Failed to consume messages: {}".format(str(e)))
 
 
-@app.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
+@app.route('/get/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
     # Validate offset
     offset = offset.lower()
