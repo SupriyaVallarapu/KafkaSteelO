@@ -11,7 +11,7 @@ paths:
       parameters:
         - name: offset
           in: path
-          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          description: The offset to start consuming messages from - earliest
           required: true
           schema:
             type: string
@@ -60,7 +60,7 @@ paths:
       parameters:
         - name: offset
           in: path
-          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          description: The offset to start consuming messages from - latest
           required: true
           schema:
             type: string
@@ -227,87 +227,315 @@ paths:
                 properties:
                   error:
                     type: string
-  
-  
-  /get/name-time-range/earliest/opctopic2/groupn/2023-05-01T00:11:51.310000/2023-05-01T00:34:32.610000/Stand 1 - Bottom Scratch Brush Oscillating B:
+  /get/name-time-range/{offset}/{topic}/{group_id}/{start_time}/{end_time}/{name}:
     get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/name-time-range/earliest/opctopic/group61/2023-05-01T04:28:51.610000/2023-05-01T04:34:11.310000/Stand 1 - Bottom Scratch Brush Engaged
-      description: name, start and end time
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /get_partition/2/earliest/csv2/newg:
-    get:
-      tags:
-        - default
-      summary: http://localhost:3002/get_partition/1/earliest/opctopic/group12
-      description: 'get by partition number '
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /get_partitions/0,2/earliest/opctopic2/grp3:
-    get:
-      tags:
-        - default
-      summary: http://localhost:3002/get_partitions/1,2/earliest/opctopic/grp3
-      description: get by list of partitions specified
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /get_partition_id/opctopic2/Stand 1 - Back Spool Position Feedback/grp3:
-    get:
-      tags:
-        - default
-      summary: http://localhost:3002/get_partition_id/opctopic/Stand 1 - Back Spool Position Feedback/grp3
-      description: get partition id from partition key
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /get/payload/earliest/postgresjdbctest_data_4/newgrp:
-    get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/payload/earliest/postgresjdbctest_data_0/readpayload
-      description: reads only payload to get data from rdbms
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /get/latest/schema/postgresjdbctest_data_2/newgrp1:
-    get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/latest/schema/postgresjdbctest_data_4/newgrp
-      description: 'get schema of the last message '
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /get/earliest/parquet/grp6/10:
-    get:
-      tags:
-        - default
-      summary: http://localhost:3002/get/earliest/parquet1/csv2/10
+      summary: Get messages by name and time range
       parameters:
-        - name: partition_key
-          in: query
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          required: true
           schema:
             type: string
-          example: Stand 1 - Front Spool Position Feedback
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+        - name: start_time
+          in: path
+          description: The start time in the format "YYYY-MM-DDTHH:MM:SS.ssssss"
+          required: true
+          schema:
+            type: string
+        - name: end_time
+          in: path
+          description: The end time in the format "YYYY-MM-DDTHH:MM:SS.ssssss"
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: The name of the sensor (optional)
+          required: false
+          schema:
+            type: string
       responses:
         '200':
-          description: Successful response
+          description: Successful operation
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Failed to retrieve messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /get_partitions/{partition_nums}/{offset}/{topic}/{group_id}:
+    get:
+      summary: Get messages from one or multiple partitions
+      parameters:
+        - name: partition_nums
+          in: path
+          description: Comma-separated list of partition numbers to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          required: true
+          schema:
+            type: string
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Failed to retrieve messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /get_partition_id/{topic}/{partition_key}/{group_id}:
+    get:
+      summary: Get partition ID by partition key
+      parameters:
+        - name: topic
+          in: path
+          description: The Kafka topic to get the partition ID from
+          required: true
+          schema:
+            type: string
+        - name: partition_key
+          in: path
+          description: The partition key
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /get/payload/{offset}/{topic}/{group_id}:
+    get:
+      summary: Get payload from Kafka topic (RDBMS data)
+      parameters:
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from ('earliest' or 'latest')
+          required: true
+          schema:
+            type: string
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /get/schema/{topic}/{group_id}:
+    get:
+      summary: Get the latest message schema from Kafka topic
+      parameters:
+        - name: topic
+          in: path
+          description: The Kafka topic to retrieve the latest message schema from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    field:
+                      type: string
+        '404':
+          description: Schema not found
+        '500':
+          description: Internal server error
+  /get/{offset}/{topic}/{group_id}/{n}:
+    get:
+      summary: Get n messages from a Kafka topic
+      parameters:
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from ("earliest" or "latest")
+          required: true
+          schema:
+            type: string
+            enum: ['earliest', 'latest']
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+        - name: n
+          in: path
+          description: The number of messages to retrieve
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        - name: partition_key
+          in: query
+          description: The partition key to filter messages from a specific partition
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Bad request
+        '404':
+          description: Partition ID not found
+        '500':
+          description: Internal server error
