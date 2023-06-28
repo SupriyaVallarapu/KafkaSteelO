@@ -1,0 +1,172 @@
+openapi: 3.0.2
+info:
+  title: KafkaSteelIO
+  version: 1.0.0
+servers:
+  - url: http://localhost:3002
+paths:
+  /get/all/{offset}/{topic}/{group_id}:
+    get:
+      summary: Get all Kafka messages
+      parameters:
+        - name: offset
+          in: path
+          description: The offset to start consuming messages from (either 'earliest' or 'latest')
+          required: true
+          schema:
+            type: string
+        - name: topic
+          in: path
+          description: The Kafka topic to consume messages from
+          required: true
+          schema:
+            type: string
+        - name: group_id
+          in: path
+          description: The Kafka consumer group ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Failed to retrieve messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /get/time-range/earliest/parquet1/group1/2023-05-01T00:00:20.010000/2023-05-01T00:00:20.010000:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/time-range/earliest/parquet1/group1/2023-05-01T00:00:20.010000/2023-05-01T00:00:20.010000
+      description: Get by Timestamps
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get/key-value/earliest/csv2/group1/Year/2021:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/key-value/earliest/csv10/group1/Year/2021
+      description: Key-Value
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get/all/latest/csvlatest/new:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/all/latest/newprod/newcons
+      description: 'latest messages added '
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get/name-time-range/earliest/opctopic2/groupn/2023-05-01T00:11:51.310000/2023-05-01T00:34:32.610000/Stand 1 - Bottom Scratch Brush Oscillating B:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/name-time-range/earliest/opctopic/group61/2023-05-01T04:28:51.610000/2023-05-01T04:34:11.310000/Stand 1 - Bottom Scratch Brush Engaged
+      description: name, start and end time
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get_partition/2/earliest/csv2/newg:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get_partition/1/earliest/opctopic/group12
+      description: 'get by partition number '
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get_partitions/0,2/earliest/opctopic2/grp3:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get_partitions/1,2/earliest/opctopic/grp3
+      description: get by list of partitions specified
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get_partition_id/opctopic2/Stand 1 - Back Spool Position Feedback/grp3:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get_partition_id/opctopic/Stand 1 - Back Spool Position Feedback/grp3
+      description: get partition id from partition key
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get/payload/earliest/postgresjdbctest_data_4/newgrp:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/payload/earliest/postgresjdbctest_data_0/readpayload
+      description: reads only payload to get data from rdbms
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get/latest/schema/postgresjdbctest_data_2/newgrp1:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/latest/schema/postgresjdbctest_data_4/newgrp
+      description: 'get schema of the last message '
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /get/earliest/parquet/grp6/10:
+    get:
+      tags:
+        - default
+      summary: http://localhost:3002/get/earliest/parquet1/csv2/10
+      parameters:
+        - name: partition_key
+          in: query
+          schema:
+            type: string
+          example: Stand 1 - Front Spool Position Feedback
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
