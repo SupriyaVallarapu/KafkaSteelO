@@ -1,42 +1,54 @@
 import json
 from flask import Flask, Response
-from confluent_kafka import Consumer, TopicPartition
+from confluent_kafka import Consumer, KafkaException, TopicPartition
 
 app = Flask(__name__)
 
 def consume_latest_message(consumer_config, topic):
     consumer = Consumer(consumer_config)
 
-    # Get the last partition for the topic
-    partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-    last_partition = max(partitions)
-    consumer.assign([TopicPartition(topic, last_partition)])
+    try:
+        # Get the last partition for the topic
+        partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
+        last_partition = max(partitions)
+        consumer.assign([TopicPartition(topic, last_partition)])
 
-    # Get the last offset in the partition
-    end_offset = consumer.get_watermark_offsets(TopicPartition(topic, last_partition))[1]
-    last_offset = end_offset - 1
+        # Get the last offset in the partition
+        end_offset = consumer.get_watermark_offsets(TopicPartition(topic, last_partition))[1]
+        last_offset = end_offset - 1
 
-    latest_message = None
+        latest_message = None
 
-    # Seek to the last offset and fetch the message
-    consumer.seek(TopicPartition(topic, last_partition, last_offset))
-    msg = consumer.poll(1.0)
-    if msg is not None and not msg.error():
-        message = msg.value().decode('utf-8')
-        fields = json.loads(message)['schema']['fields']
-        extracted_fields = [{'type': field['type'], 'field': field['field']} for field in fields]
-        latest_message = extracted_fields
+        if last_offset >= 0:
+            # Seek to the last offset and fetch the message
+            consumer.seek(TopicPartition(topic, last_partition, last_offset))
+            msg = consumer.poll(5.0)
 
-    consumer.close()
+            if msg is not None and not msg.error():
+                message = msg.value().decode('utf-8')
+                fields = json.loads(message)['schema']['fields']
+                extracted_fields = [{'type': field['type'], 'field': field['field']} for field in fields]
+                latest_message = extracted_fields
+
+    except KafkaException as ke:
+        # Handle Kafka-related exceptions
+        print(f"KafkaException: {ke}")
+
+    except Exception as e:
+        # Handle other exceptions
+        print(f"Exception: {e}")
+
+    finally:
+        consumer.close()
 
     return latest_message
 
-@app.route('/get/latest/schema/<topic>/<group_id>', methods=['GET'])
+@app.route('/get/schema/<topic>/<group_id>', methods=['GET'])
 def get_latest_message_schema(topic, group_id):
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
         'group.id': group_id,
-        'auto.offset.reset': 'latest',
+        'auto.offset.reset': 'earliest',
         'enable.auto.commit': False
     }
 
@@ -48,6 +60,4 @@ def get_latest_message_schema(topic, group_id):
         return Response(status=404)
 
 if __name__ == '__main__':
-    topic = input("Enter topic: ")
-    group_id = input("Enter group ID: ")
     app.run(port=3002)
