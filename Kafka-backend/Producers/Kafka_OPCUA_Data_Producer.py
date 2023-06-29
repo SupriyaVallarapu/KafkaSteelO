@@ -1,15 +1,15 @@
 from flask import Blueprint, request, jsonify
 import time
 from opcua import Client
-from confluent_kafka import Producer, KafkaException
+from confluent_kafka import Producer
 import json
-
+import threading
 opcua_blueprint = Blueprint('opcua_blueprint', __name__)
 
 kafka_broker_default = "localhost:9092"
 
 @opcua_blueprint.route('/api/opcuaproduce', methods=['POST'])
-def get_data():
+def start_process():
     data = request.get_json()
 
     opcua_url = data.get('opcua_url')
@@ -19,18 +19,25 @@ def get_data():
 
     producer = create_kafka_producer(kafka_broker)
 
-    try:
-        # Get the data from the OPCUA server and publish it to Kafka
-        for node_id in node_ids:
-            data, display_name, timestamp = get_opcua_data(opcua_url, node_id)
-            publish_to_kafka(data, display_name, timestamp, kafka_topic, producer)
+    # Start a new thread that will collect and stream data
+    threading.Thread(target=collect_and_stream_data, args=(opcua_url, node_ids, kafka_topic, producer)).start()
 
-        # Wait for a while before polling the OPCUA server again
-        time.sleep(0.1)
-        return jsonify({'message': 'Data processed successfully'}), 200
+    return {'message': 'Data collection and streaming process started.'}
 
-    except Exception as e:
-        return jsonify({'message': f"Error occurred: {str(e)}"}), 400
+def collect_and_stream_data(opcua_url, node_ids, kafka_topic, producer):
+    while True:
+        try:
+            # Get the data from the OPCUA server and publish it to Kafka
+            for node_id in node_ids:
+                data, display_name, timestamp = get_opcua_data(opcua_url, node_id)
+                publish_to_kafka(data, display_name, timestamp, kafka_topic, producer)
+
+            # Wait for a while before polling the OPCUA server again
+            time.sleep(0.1)
+
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            time.sleep(10)
 
 def create_kafka_producer(broker):
     return Producer({
@@ -54,7 +61,7 @@ def get_opcua_data(opcua_url, node_id):
     finally:
         client.disconnect()
 
-def publish_to_kafka(data, display_name, timestamp, kafka_topic, producer):
+def publish_to_kafka(data, display_name, timestamp, kafka_topic, producer,cur=None, conn=None):
     # Create a message to be sent to Kafka
     message = {
         'sensor_name': display_name,

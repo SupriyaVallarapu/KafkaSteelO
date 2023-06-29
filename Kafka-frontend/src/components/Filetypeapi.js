@@ -79,19 +79,26 @@ function Filetypeapi() {
     <Layoutnavbar>
 
       {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+      <h3>Instructions</h3>
+      <br></br>
+      <ul>
+        <li>All fields marked * are mandatory</li>
+        <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
+          Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+      </ul>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="apiurl">
-          <Form.Label>Api URL:</Form.Label>
-          <Form.Control type="text" value={apiurl} onChange={(e) => setapiurl(e.target.value)} />
+          <Form.Label>Api URL *</Form.Label>
+          <Form.Control type="text" required value={apiurl} placeholder="Enter a valid  API URL" onChange={(e) => setapiurl(e.target.value)} />
         </Form.Group>
 
         <Form.Group controlId="kafkaBroker">
-          <Form.Label>Kafka Broker:</Form.Label>
-          <Form.Control type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
+          <Form.Label>Kafka Broker *</Form.Label>
+          <Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker: example: localhost:9092" onChange={(e) => setKafkaBroker(e.target.value)} />
         </Form.Group>
         <Form.Group controlId="kafkaTopic">
-          <Form.Label>Kafka Topic:</Form.Label>
-          <Form.Control type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+          <Form.Label>Kafka Topic Name *</Form.Label>
+          <Form.Control type="text" required value={kafkaTopic} placeholder='Enter Kafka Topic (No Spaces allowed)' onChange={(e) => setKafkaTopic(e.target.value)} />
         </Form.Group>
         <Button variant="primary" type="submit">
           Publish
