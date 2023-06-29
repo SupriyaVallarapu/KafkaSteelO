@@ -8,12 +8,13 @@ from Producers.Kafka_ParquetFile_Data_Producer import parquet_blueprint
 from Database_Persist_only.Kafka_Database_Persist_Consumer import persist_blueprint
 from Producers.Kafka_OPCUA_Data_Producer import opcua_blueprint
 from Database_Persist_only.Kafka_OPCUA_Database_Persist_Consumer import OPCUA_persist_blueprint
-#from Producers.Kafka_Postgres_Data_Producer import postgres_blueprint
-from Consumers.Get_All import get_all_messages_blueprint
 from Producers.Kafka_Data_Connect_Producer import postgres_blueprint
-# from Producers.Kafka_MSSQL_Data_Producer import db_connector_blueprint
+from Consumers.Get_All import get_all_messages_blueprint
+from Consumers.Get_By_Key_Value import get_by_key_value_blueprint
+from Consumers.Get_By_Name_And_Timestamps import get_by_name_and_timestamps_blueprint
+
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000","http://localhost:8083", "http://localhost:3002"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000","http://localhost:8083"]}})
 
 app.register_blueprint(csv_blueprint)
 app.register_blueprint(api_blueprint)
@@ -23,7 +24,8 @@ app.register_blueprint(opcua_blueprint)
 app.register_blueprint(OPCUA_persist_blueprint)
 app.register_blueprint(postgres_blueprint)
 app.register_blueprint(get_all_messages_blueprint)
-
+app.register_blueprint(get_by_key_value_blueprint)
+app.register_blueprint(get_by_name_and_timestamps_blueprint)
 
 if __name__ == "__main__":
     app.run(port=8080)

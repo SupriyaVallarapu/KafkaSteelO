@@ -1,10 +1,10 @@
-from flask import Flask, Response, jsonify
+from flask import Blueprint, Flask, Response, jsonify
 from confluent_kafka import Consumer, KafkaException, TopicPartition
 import json
 from werkzeug.exceptions import BadRequest
 from datetime import datetime
 
-app = Flask(__name__)
+get_by_name_and_timestamps_blueprint = Blueprint('get_by_name_and_timestamps_blueprint', __name__)
 
 
 def consume_messages_all(consumer_config, topic):
@@ -54,8 +54,7 @@ def search_messages_by_time_range(messages, start_time, end_time):
 
     return found_messages
 
-
-@app.route('/get/name-time-range/<offset>/<topic>/<group_id>/<start_time>/<end_time>/<name>', methods=['GET'])
+@get_by_name_and_timestamps_blueprint.route('/get/name-time-range/<offset>/<topic>/<group_id>/<start_time>/<end_time>/<name>', methods=['GET'])
 def get_messages_by_time_range(offset, topic, group_id, start_time, end_time, name):
     try:
         offset = offset.lower()
@@ -94,5 +93,5 @@ def get_messages_by_time_range(offset, topic, group_id, start_time, end_time, na
         raise BadRequest('An error occurred: {}'.format(str(e)))
 
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)

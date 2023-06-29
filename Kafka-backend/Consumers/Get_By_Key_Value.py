@@ -1,9 +1,8 @@
-from flask import Flask, Response, jsonify
+from flask import Blueprint, Flask, Response, jsonify
 from confluent_kafka import Consumer, TopicPartition
 import json
 
-app = Flask(__name__)
-
+get_by_key_value_blueprint = Blueprint('get_by_key_value_blueprint', __name__)
 
 def consume_messages_all(consumer_config, topic):
     try:
@@ -60,8 +59,7 @@ def search_messages_by_key_value(messages, key, value):
 
     return found_messages
 
-
-@app.route('/get/key-value/<offset>/<topic>/<group_id>/<key>/<value>', methods=['GET'])
+@get_by_key_value_blueprint.route('/get/key-value/<offset>/<topic>/<group_id>/<key>/<value>', methods=['GET'])
 def get_messages_by_key_value(offset, topic, group_id, key, value):
     try:
         consumer_config = {
@@ -85,6 +83,6 @@ def get_messages_by_key_value(offset, topic, group_id, key, value):
         return Response(json.dumps({"error": error_message}), status=500, mimetype='application/json')
 
 
-if __name__ == '__main__':
-        app.run(port=3002)
+# if __name__ == '__main__':
+#         app.run(port=3002)
 
