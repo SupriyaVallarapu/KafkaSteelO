@@ -3,12 +3,11 @@ import './App.css';
 import Filetypecsv from './components/Filetypecsv';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Persistdataform from './components/Persistdataform';
-import Postgresconnector from './components/Postgresconnector';
-import Opcua from './components/Opcua';
+import Opcuadata from './components/Opcuadata';
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
-
 import Filetypeapi from './components/Filetypeapi';
 import Filetypeparquet from './components/Filetypeparquet';
+import Dataconnectorform from './components/Dataconnectorform';
 function App() {
   return (
     <Router>
@@ -19,8 +18,8 @@ function App() {
       <Route exact path="/Filetypeapi" element={<Filetypeapi/>} />
       <Route exact path="/Filetypeparquet" element={<Filetypeparquet/>} />
       <Route exact path="/Persistdataform" element={<Persistdataform/>} />
-      <Route exact path="/Opcua" element={<Opcua/>} />
-      <Route exact path="/Postgresconnector" element={<Postgresconnector/>} />
+      <Route exact path="/Opcuadata" element={<Opcuadata/>} />
+      <Route exact path="/Dataconnectorform" element={<Dataconnectorform/>} />
       {/* Add more Routes as needed */}
     </Routes>
   </Router>

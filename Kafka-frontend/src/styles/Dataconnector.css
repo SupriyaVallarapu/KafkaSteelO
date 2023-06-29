@@ -1,0 +1,47 @@
+.dataconnectorform-container {
+    display: flex;
+    justify-content: space-between;
+    
+    padding: 10px;
+    height: 100vh;
+}
+
+
+.dataconnectorform-form {
+    width: 65%;
+    padding: 0; /* Removes any padding */
+    margin: 0; /* Removes any margin */
+}
+
+.dataconnectorform-textbox-container {
+    width: 35%;
+    height: 80%;
+margin-top: 3%;
+    padding: 0 2rem;
+    font-weight: bold;
+
+}
+
+.dataconnectorform-textbox-group {
+    height: 58%;
+    align-items: center;
+   
+}
+
+.dataconnectorform-textbox {
+    height: 58%;
+    font-size: 13px;
+    padding: 0;
+    
+}
+
+
+.instructions-container {
+    height: auto; /* it will expand based on the content inside */
+    width: 100%; /* it will take the full width of the parent container */
+    padding: 20px; /* padding inside the box */
+    margin-top: 20px; /* margin from the top */
+    background-color: rgba(224, 224, 224, 0.459); /* color of the box, you can also use #d3d3d3 for light grey */
+    box-sizing: border-box; /* this makes sure padding is included in the width and height */
+}
+

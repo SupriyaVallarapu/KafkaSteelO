@@ -1,4 +1,4 @@
-import React, { useState ,useRef} from 'react';
+import React, { useState } from 'react';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Form, Button } from 'react-bootstrap';
 //import { useNavigate } from 'react-router-dom';
@@ -31,7 +31,7 @@ function Persistdataform() {
     const [consumergroup, setconsumergroup] = useState('')
     const [data, setData] = useState('');
     const [alerts, setAlerts] = useState([]);
-    const endpointRef = useRef(0);
+    //const endpointRef = useRef(0);
     // const navigate = useNavigate();
     const addAlert = (component) => {
         setAlerts(alerts => [...alerts, { id: id++, component }]);
@@ -50,7 +50,7 @@ function Persistdataform() {
             return;
         }
 
-        
+
 
         const payload = {
             kafka_broker: kafkaBroker,
@@ -64,12 +64,7 @@ function Persistdataform() {
             offset: offset,
             consumer_group: consumergroup
         };
-        const apiEndpoint = endpointRef.current === 0 ? 
-            `http://localhost:8080/api/consume_and_persist_opcua` : 
-            `http://localhost:8080/api/consume_and_persist`;
-
-        // After using an endpoint, switch to the other one
-        endpointRef.current = endpointRef.current === 0 ? 1 : 0;
+        const apiEndpoint = data === 'opcua' ? `http://localhost:8080/api/consume_and_persist_opcua` : `http://localhost:8080/api/consume_and_persist`;
 
         fetch(apiEndpoint, {
             method: 'POST',
@@ -86,13 +81,13 @@ function Persistdataform() {
                 } else {
                     console.log(response);
                     throw response;
-                    
+
 
                 }
             })
             .catch(errorResponse => {
                 if (errorResponse.json) {
-                    
+
                     errorResponse.json().then(error => {
                         if (error.error.startsWith('Error parsing request body')) {
                             addAlert(<RequestBodyErrorAlert />);
@@ -132,7 +127,13 @@ function Persistdataform() {
 
             {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
             <Form onSubmit={handleSubmit}>
-                <h4>Persist Data</h4>
+                <h3>Instructions</h3>
+                <br></br>
+                <ul>
+                    <li>All fields marked * are mandatory</li>
+                    <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
+                        Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+                </ul>
 
                 {/* {sourceType === 'csv' && (
                     <Form.Group controlId="directoryPath">
@@ -160,48 +161,48 @@ function Persistdataform() {
                     </Form.Group>
                 )} */}
                 <Form.Group controlId="kafkaBroker">
-                    <Form.Label>Kafka Broker:</Form.Label>
-                    <Form.Control type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
+                    <Form.Label>Kafka Broker *</Form.Label>
+                    <Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker: example: localhost:9092" onChange={(e) => setKafkaBroker(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="kafkaTopic">
-                    <Form.Label>Kafka Topic:</Form.Label>
-                    <Form.Control type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+                    <Form.Label>Kafka Topic Name *</Form.Label>
+                    <Form.Control type="text" required placeholder='Enter Kafka Topic name (No Spaces allowed)' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbname">
-                    <Form.Label>DB Name:</Form.Label>
-                    <Form.Control type="text" value={dbname} onChange={(e) => setdbname(e.target.value)} />
+                    <Form.Label>DB Name *</Form.Label>
+                    <Form.Control type="text" required placeholder='Enter your Database name' value={dbname} onChange={(e) => setdbname(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbschema">
-                    <Form.Label>DB Schema:</Form.Label>
-                    <Form.Control type="text" value={dbschema} onChange={(e) => setdbschema(e.target.value)} />
+                    <Form.Label>DB Schema *</Form.Label>
+                    <Form.Control type="text" required placeholder='Enter your Database Schema Name (Schema should be created already)' value={dbschema} onChange={(e) => setdbschema(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbuser">
-                    <Form.Label>DB User:</Form.Label>
-                    <Form.Control type="text" value={dbuser} onChange={(e) => setdbuser(e.target.value)} />
+                    <Form.Label>DB User *</Form.Label>
+                    <Form.Control type="text" required value={dbuser} placeholder='Enter your Database Username' onChange={(e) => setdbuser(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbPassword">
-                    <Form.Label>DB Password:</Form.Label>
-                    <Form.Control type="text" value={dbpassword} onChange={(e) => setdbpassword(e.target.value)} />
+                    <Form.Label>DB Password *</Form.Label>
+                    <Form.Control type="text" required value={dbpassword} placeholder='Enter your Databsae Password' onChange={(e) => setdbpassword(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbhost">
-                    <Form.Label>DB Host:</Form.Label>
-                    <Form.Control type="text" value={dbhost} onChange={(e) => setdbhost(e.target.value)} />
+                    <Form.Label>DB Host *</Form.Label>
+                    <Form.Control type="text" required value={dbhost} placeholder='Enter your Database Host name' onChange={(e) => setdbhost(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbport">
-                    <Form.Label>DB Port:</Form.Label>
-                    <Form.Control type="number" value={dbport} onChange={(e) => setdbport(e.target.value)} />
+                    <Form.Label>DB Port *</Form.Label>
+                    <Form.Control type="number" required value={dbport} placeholder='Enter your Database Port Number' onChange={(e) => setdbport(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="offset">
-                    <Form.Label>Offset:</Form.Label>
-                    <Form.Control type="text" value={offset} onChange={(e) => setoffset(e.target.value)} />
+                    <Form.Label>Offset *</Form.Label>
+                    <Form.Control type="text" required value={offset} placeholder='Enter offset (beginning or end)' onChange={(e) => setoffset(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="consumergroup">
-                    <Form.Label>Consumer Group</Form.Label>
-                    <Form.Control type="text" value={consumergroup} onChange={(e) => setconsumergroup(e.target.value)} />
+                    <Form.Label>Consumer Group *</Form.Label>
+                    <Form.Control type="text" required value={consumergroup} placeholder='Enter Consumer group name' onChange={(e) => setconsumergroup(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dataType">
-                    <Form.Label>Choose which data to Persist?:</Form.Label>
-                    <Form.Control as="select" value={data} onChange={(e) => setData(e.target.value)}>
+                    <Form.Label>Choose which data to Persist?: *</Form.Label>
+                    <Form.Control as="select" required value={data} onChange={(e) => setData(e.target.value)}>
                         <option value="">Select</option>
                         <option value="opcua">Persist OPCUA Data</option>
                         <option value="normal">Persist CSV/API/Parquet Data</option>

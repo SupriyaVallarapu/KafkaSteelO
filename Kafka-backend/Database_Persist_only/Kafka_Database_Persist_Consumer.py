@@ -7,7 +7,7 @@ from getpass import getpass
 import traceback
 
 persist_blueprint= Blueprint('persist_blueprint', __name__)
-@persist_blueprint.route('/consume_and_persist', methods=['POST'])
+@persist_blueprint.route('/api/consume_and_persist', methods=['POST'])
 @cross_origin()
 def consume_and_persist():
     try:
