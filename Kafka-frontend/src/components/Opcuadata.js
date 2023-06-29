@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import './Filetypecsv.css';
+import '../styles/Filetypecsv.css';
 import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, OpcuaURLconnectAlert } from '../Alerts/Alerts.js';
 
 let id = 0;
-function Opcua() {
+function Opcuadata() {
     const [opcuaurl, setopcuaurl] = useState('');
     const [nodeids, setnodeids] = useState('');
     const [kafkaBroker, setKafkaBroker] = useState('');
@@ -38,7 +38,7 @@ function Opcua() {
             opcua_url: opcuaurl,
             kafka_broker: kafkaBroker,
             kafka_topic: kafkaTopic,
-            node_ids:nodeids
+            node_ids: nodeids
         };
 
         fetch('http://localhost:8080/api/opcuaproduce', {
@@ -63,7 +63,7 @@ function Opcua() {
                 if (errorResponse.json) {
                     errorResponse.json().then(error => {
                         switch (error.error) {
-                            case 'could not connect to ${opcua}':
+                            case `could not connect to ${opcuaurl}`:
                                 addAlert(<OpcuaURLconnectAlert />);
                                 break;
                             default:
@@ -82,23 +82,31 @@ function Opcua() {
     return (
         <Layoutnavbar>
             {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
-
+            <h3>Instructions</h3>
+            <br></br>
+            <ul>
+                <li>All fields marked * are mandatory</li>
+                <li>OPC URL format must be opc.tcp://localhost:4840 </li>
+                <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
+                    Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+                <li>Node IDs must be separated by commas (example - ns=2;i=4,ns=2;i=3):</li>
+            </ul>
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="opcuaurl" className="form-group-custom">
-                    <Form.Label>OPCUA URL:</Form.Label>
-                    <Form.Control className="form-control-custom" type="text" value={opcuaurl} onChange={(e) => setopcuaurl(e.target.value)} />
+                    <Form.Label>OPCUA URL *</Form.Label>
+                    <Form.Control className="form-control-custom" required type="text" placeholder='Enter the URL of the OPCUA server' value={opcuaurl} onChange={(e) => setopcuaurl(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="kafkaBroker" className="form-group-custom">
-                    <Form.Label>Kafka Broker:</Form.Label>
-                    <Form.Control className="form-control-custom" type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
+                    <Form.Label>Kafka Broker *</Form.Label>
+                    <Form.Control className="form-control-custom" required type="text" placeholder="Enter Kafka Broker: example: localhost:9092" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="kafkaTopic" className="form-group-custom">
-                    <Form.Label>Kafka Topic:</Form.Label>
-                    <Form.Control className="form-control-custom" type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+                    <Form.Label>Kafka Topic Name *</Form.Label>
+                    <Form.Control className="form-control-custom" required type="text" placeholder='Enter Kafka Topic name (No Spaces allowed)' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="nodeids" className="form-group-custom">
-                    <Form.Label>Node IDs:</Form.Label>
-                    <Form.Control className="form-control-custom" type="text" value={nodeids} onChange={(e) => setnodeids(e.target.value)} />
+                    <Form.Label>Node IDs *</Form.Label>
+                    <Form.Control className="form-control-custom" required type="text" placeholder='Enter the node IDs' value={nodeids} onChange={(e) => setnodeids(e.target.value)} />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     Publish
@@ -108,4 +116,4 @@ function Opcua() {
     );
 }
 
-export default Opcua;
+export default Opcuadata;

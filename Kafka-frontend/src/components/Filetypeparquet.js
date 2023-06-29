@@ -4,7 +4,7 @@ import Layoutnavbar from '../Layouts/Layoutnavbar';
 //import { useNavigate } from 'react-router-dom';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert } from '../Alerts/Alerts.js';
 
-let id =0;
+let id = 0;
 function Filetypeparquet() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
@@ -24,9 +24,9 @@ function Filetypeparquet() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setAlerts([]);
-   
+
     // Create a JSON payload with the form data
-    if (!dataDir || !kafkaBroker || !kafkaTopic ||!timecolumnname) {
+    if (!dataDir || !kafkaBroker || !kafkaTopic || !timecolumnname) {
       addAlert(<EmptyFieldAlert />);
       return;
     }
@@ -77,29 +77,36 @@ function Filetypeparquet() {
           addAlert(<FailedUploadAlert />);
         }
       });
-    
+
   };
 
- 
+
   return (
     <Layoutnavbar>
-       {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+      {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+      <h3>Instructions</h3>
+      <br></br>
+      <ul>
+        <li>All fields marked * are mandatory</li>
+        <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
+          Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+      </ul>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId='dataDir'>
-          <Form.Label>Data Directory Path </Form.Label>
-          < Form.Control type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)}></Form.Control>
+          <Form.Label>Data Directory Path *</Form.Label>
+          < Form.Control type="text" required value={dataDir} placeholder="Enter directory folder path of Parquet files" onChange={(e) => setDataDir(e.target.value)}></Form.Control>
         </Form.Group>
         <Form.Group controlId='kafkaBroker'>
-          <Form.Label>Kafka Broker: </Form.Label>
-          < Form.Control type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)}></Form.Control>
+          <Form.Label>Kafka Broker *</Form.Label>
+          < Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker: example: localhost:9092" onChange={(e) => setKafkaBroker(e.target.value)}></Form.Control>
         </Form.Group>
         <Form.Group controlId='kafkaTopic'>
-          <Form.Label>Kafka Topic: </Form.Label>
-          < Form.Control type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)}></Form.Control>
+          <Form.Label>Kafka Topic Name *</Form.Label>
+          < Form.Control type="text" required value={kafkaTopic} placeholder='Enter Kafka Topic' onChange={(e) => setKafkaTopic(e.target.value)}></Form.Control>
         </Form.Group>
         <Form.Group controlId='timecolumnname'>
-          <Form.Label>Time Column Name </Form.Label>
-          < Form.Control type="text" value={timecolumnname} onChange={(e) => settimecolumnname(e.target.value)}></Form.Control>
+          <Form.Label>Time Column Name *</Form.Label>
+          < Form.Control type="text" required value={timecolumnname} placeholder='Enter time column name' onChange={(e) => settimecolumnname(e.target.value)}></Form.Control>
         </Form.Group>
         <Button variant='primary' type="submit">Publish</Button>
       </Form>

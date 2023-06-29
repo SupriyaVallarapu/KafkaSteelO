@@ -24,9 +24,9 @@ const Layoutnavbar = ({ children }) => {
                   <Nav.Link as={Link} to='/Filetypecsv' className="text-white" >CSV File</Nav.Link>
                   <Nav.Link as={Link} to='/Filetypeapi' className="text-white" >API</Nav.Link>
                   <Nav.Link as={Link} to='/Filetypeparquet' className="text-white">Parquet File</Nav.Link>
-                  <Nav.Link as={Link} to='/Opcua' className="text-white">OPCUA Data</Nav.Link>
+                  <Nav.Link as={Link} to='/Opcuadata' className="text-white">OPCUA Data</Nav.Link>
                   <Nav.Link as={Link} to='/Persistdataform' className="text-white">Persist Data</Nav.Link>
-                  <Nav.Link as={Link} to='/Postgresconnector' className="text-white">Postgres Data Connector</Nav.Link>
+                  <Nav.Link as={Link} to='/Dataconnectorform' className="text-white">Data Connector</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>

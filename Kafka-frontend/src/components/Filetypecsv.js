@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import './Filetypecsv.css';
+import '../styles/Filetypecsv.css';
 import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
+import { Card } from 'react-bootstrap';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert } from '../Alerts/Alerts.js';
 
-let id=0;
+let id = 0;
 function Filetypecsv() {
   const [dataDir, setDataDir] = useState('');
   const [kafkaBroker, setKafkaBroker] = useState('');
@@ -26,7 +27,7 @@ function Filetypecsv() {
 
     setAlerts([]);  // Clear previous alerts
 
-    
+
     // Validate fields
     if (!dataDir || !kafkaBroker || !kafkaTopic) {
       addAlert(<EmptyFieldAlert />);
@@ -61,10 +62,10 @@ function Filetypecsv() {
         if (errorResponse.json) {
           errorResponse.json().then(error => {
             switch (error.error) {
-              case 'Directory ${dataDir} does not exist':
+              case `Directory ${dataDir} does not exist`:
                 addAlert(<DirectoryPathDoesntExistAlert />);
                 break;
-              case 'No CSV files found in directory ${dataDir}':
+              case `No CSV files found in directory ${dataDir}`:
                 addAlert(<NoFilesInPathAlert />);
                 break;
               default:
@@ -82,20 +83,31 @@ function Filetypecsv() {
 
   return (
     <Layoutnavbar>
-       {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
-    
+      {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+      <Card className='instructions-container'>
+        <Card.Body>
+          <h3>Instructions</h3>
+          <br></br>
+          <ul>
+            <li>All fields marked * are mandatory</li>
+            <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
+              Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+
+          </ul>
+        </Card.Body>
+      </Card>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="directoryPath" className="form-group-custom">
-          <Form.Label>Directory Path:</Form.Label>
-          <Form.Control className="form-control-custom" type="text" value={dataDir} onChange={(e) => setDataDir(e.target.value)} />
+          <Form.Label>Directory Path *</Form.Label>
+          <Form.Control className="form-control-custom" required type="text" placeholder="Enter directory folder path of CSV files" value={dataDir} onChange={(e) => setDataDir(e.target.value)} />
         </Form.Group>
         <Form.Group controlId="kafkaBroker" className="form-group-custom">
-          <Form.Label>Kafka Broker:</Form.Label>
-          <Form.Control className="form-control-custom" type="text" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
+          <Form.Label>Kafka Broker *</Form.Label>
+          <Form.Control className="form-control-custom" required type="text" placeholder="Enter Kafka Broker: example: localhost:9092" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
         </Form.Group>
         <Form.Group controlId="kafkaTopic" className="form-group-custom">
-          <Form.Label>Kafka Topic:</Form.Label>
-          <Form.Control className="form-control-custom" type="text" value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+          <Form.Label>Kafka Topic Name *</Form.Label>
+          <Form.Control className="form-control-custom" required type="text" placeholder='Enter Kafka Topic' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
         </Form.Group>
         <Button variant="primary" type="submit">
           Publish
