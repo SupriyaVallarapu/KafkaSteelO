@@ -1,8 +1,33 @@
-from flask import Flask, jsonify
+from flask import Blueprint, Flask, jsonify
 from confluent_kafka import Consumer, TopicPartition
 import json
 
-app = Flask(__name__)
+get_all_messages_blueprint = Blueprint('get_all_messages_blueprint', __name__)
+
+@get_all_messages_blueprint.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
+def get_all_messages(offset, topic, group_id):
+    # Validate offset
+    offset = offset.lower()
+    if offset not in ["earliest", "latest"]:
+        return jsonify(error="Invalid offset"), 400
+
+    # Validate topic and group_id
+    if not topic or not group_id:
+        return jsonify(error="Invalid topic or group ID"), 400
+
+    consumer_config = {
+        'bootstrap.servers': 'localhost:9092',
+        'group.id': group_id,
+        'auto.offset.reset': offset,
+        'enable.auto.commit': False
+    }
+
+    try:
+        messages = consume_messages_all(consumer_config, topic)
+        return jsonify(messages)
+    except Exception as e:
+        return jsonify(error="Failed to retrieve messages: {}".format(str(e))), 500
+
 
 def consume_messages_all(consumer_config, topic):
     try:
@@ -35,30 +60,5 @@ def consume_messages_all(consumer_config, topic):
         raise Exception("Failed to consume messages: {}".format(str(e)))
 
 
-@app.route('/get/all/<offset>/<topic>/<group_id>', methods=['GET'])
-def get_all_messages(offset, topic, group_id):
-    # Validate offset
-    offset = offset.lower()
-    if offset not in ["earliest", "latest"]:
-        return jsonify(error="Invalid offset"), 400
-
-    # Validate topic and group_id
-    if not topic or not group_id:
-        return jsonify(error="Invalid topic or group ID"), 400
-
-    consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
-        'group.id': group_id,
-        'auto.offset.reset': offset,
-        'enable.auto.commit': False
-    }
-
-    try:
-        messages = consume_messages_all(consumer_config, topic)
-        return jsonify(messages)
-    except Exception as e:
-        return jsonify(error="Failed to retrieve messages: {}".format(str(e))), 500
-
-
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)

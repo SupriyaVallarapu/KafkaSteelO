@@ -12,12 +12,12 @@ services:
       - "3004:8080"
     networks:
       - kafka-network
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-      - schema-registry
-      - kafka-connect
+    # depends_on:
+    #   - kafka1
+    #   - kafka2
+    #   - kafka3
+    #   - schema-registry
+    #   - kafka-connect
 
   zoo1:
     image: confluentinc/cp-zookeeper:7.3.2
