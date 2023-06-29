@@ -9,6 +9,7 @@ from Database_Persist_only.Kafka_Database_Persist_Consumer import persist_bluepr
 from Producers.Kafka_OPCUA_Data_Producer import opcua_blueprint
 from Database_Persist_only.Kafka_OPCUA_Database_Persist_Consumer import OPCUA_persist_blueprint
 from Producers.Kafka_Postgres_Data_Producer import postgres_blueprint
+from Consumers.Get_All import get_all_messages_blueprint
 # from Producers.Kafka_MSSQL_Data_Producer import db_connector_blueprint
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000","http://localhost:8083"]}})
@@ -20,6 +21,7 @@ app.register_blueprint(persist_blueprint)
 app.register_blueprint(opcua_blueprint)
 app.register_blueprint(OPCUA_persist_blueprint)
 app.register_blueprint(postgres_blueprint)
+app.register_blueprint(get_all_messages_blueprint)
 # app.register_blueprint(db_connector_blueprint)
 
 if __name__ == "__main__":
