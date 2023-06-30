@@ -30,7 +30,7 @@ def get_partition_id(consumer_config, topic, partition_key):
 
     return None
 
-@get_partitionid_from_partitionkey_blueprint.route('/get_partition_id/<topic>/<partition_key>/<group_id', methods=['GET'])
+@get_partitionid_from_partitionkey_blueprint.route('/get_partition_id/<topic>/<partition_key>/<group_id>', methods=['GET'])
 def get_partition_id_endpoint(topic, partition_key, group_id):
     # Validate inputs
     if not topic or not partition_key or not group_id:
@@ -51,17 +51,17 @@ def get_partition_id_endpoint(topic, partition_key, group_id):
     return Response(json_data, mimetype='application/json')
 
 
-@get_partitionid_from_partitionkey_blueprint.errorhandler(400)
-def bad_request(error):
-    response = jsonify({'error': error.description})
-    response.status_code = 400
-    return response
+# @get_partitionid_from_partitionkey_blueprint.errorhandler(400)
+# def bad_request(error):
+#     response = jsonify({'error': error.description})
+#     response.status_code = 400
+#     return response
 
-@get_partitionid_from_partitionkey_blueprint.errorhandler(404)
-def not_found(error):
-    response = jsonify({'error': error.description})
-    response.status_code = 404
-    return response
+# @get_partitionid_from_partitionkey_blueprint.errorhandler(404)
+# def not_found(error):
+#     response = jsonify({'error': error.description})
+#     response.status_code = 404
+#     return response
 
 # if __name__ == '__main__':
 #     app.run(port=3002)

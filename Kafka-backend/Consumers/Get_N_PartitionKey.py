@@ -135,10 +135,10 @@ def consume_messages_n(consumer, topic, n):
     return messages
 
 @get_n_partitionkey_blueprint.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'])
-@get_n_partitionkey_blueprint.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'],defaults={'partition_key': ''})
+@get_n_partitionkey_blueprint.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'], defaults={'partition_key': ''})
 @handle_exceptions
 @validate_input
-def get_partition_and_messages(offset, topic, group_id, n):
+def get_partition_and_messages(offset, topic, group_id, n, partition_key):
     partition_key = request.args.get('partition_key')
 
     consumer_config = {
