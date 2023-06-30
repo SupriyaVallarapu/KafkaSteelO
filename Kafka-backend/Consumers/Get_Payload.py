@@ -1,8 +1,8 @@
 import json
-from flask import Flask, Response, abort
+from flask import Blueprint, Flask, Response, abort
 from confluent_kafka import Consumer, TopicPartition
 
-app = Flask(__name__)
+get_payload_blueprint = Blueprint('get_payload_blueprint', __name__)
 
 def consume_messages_all(consumer_config, topic):
     consumer = Consumer(consumer_config)
@@ -31,7 +31,7 @@ def consume_messages_all(consumer_config, topic):
 
     return messages
 
-@app.route('/get/payload/<offset>/<topic>/<group_id>', methods=['GET'])
+@get_payload_blueprint.route('/get/payload/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
     # Validate inputs
     if not offset or not topic or not group_id:
@@ -55,17 +55,17 @@ def get_all_messages(offset, topic, group_id):
     except Exception as e:
         abort(500, 'An error occurred while consuming messages.')
 
-@app.errorhandler(400)
-def bad_request(error):
-    response = Response(json.dumps({'error': error.description}), mimetype='application/json')
-    response.status_code = 400
-    return response
+# @get_payload_blueprint.errorhandler(400)
+# def bad_request(error):
+#     response = Response(json.dumps({'error': error.description}), mimetype='application/json')
+#     response.status_code = 400
+#     return response
 
-@app.errorhandler(500)
-def internal_server_error(error):
-    response = Response(json.dumps({'error': error.description}), mimetype='application/json')
-    response.status_code = 500
-    return response
+# @get_payload_blueprint.errorhandler(500)
+# def internal_server_error(error):
+#     response = Response(json.dumps({'error': error.description}), mimetype='application/json')
+#     response.status_code = 500
+#     return response
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)

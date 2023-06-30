@@ -1,8 +1,8 @@
 import json
-from flask import Flask, Response, jsonify, request, abort
+from flask import Blueprint, Flask, Response, jsonify, request, abort
 from confluent_kafka import Consumer, TopicPartition
 
-app = Flask(__name__)
+get_partitions_blueprint = Blueprint('get_partitions_blueprint', __name__)
 
 def consume_messages_partitions(consumer_config, topic, partition_nums):
     consumer = Consumer(consumer_config)
@@ -37,8 +37,7 @@ def consume_messages_partitions(consumer_config, topic, partition_nums):
 
     return messages
 
-
-@app.route('/get_partitions/<partition_nums>/<offset>/<topic>/<group_id>', methods=['GET'])
+@get_partitions_blueprint.route('/get_partitions/<partition_nums>/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_partition_messages(partition_nums, offset, topic, group_id):
     # Validate inputs
     if not partition_nums or not offset or not topic or not group_id:
@@ -62,23 +61,23 @@ def get_partition_messages(partition_nums, offset, topic, group_id):
     except Exception as e:
         abort(500, 'An error occurred while consuming messages.')
 
-@app.errorhandler(400)
-def bad_request(error):
-    response = jsonify({'error': error.description})
-    response.status_code = 400
-    return response
+# @get_partitions_blueprint.errorhandler(400)
+# def bad_request(error):
+#     response = jsonify({'error': error.description})
+#     response.status_code = 400
+#     return response
 
-@app.errorhandler(404)
-def not_found(error):
-    response = jsonify({'error': error.description})
-    response.status_code = 404
-    return response
+# @get_partitions_blueprint.errorhandler(404)
+# def not_found(error):
+#     response = jsonify({'error': error.description})
+#     response.status_code = 404
+#     return response
 
-@app.errorhandler(500)
-def internal_server_error(error):
-    response = jsonify({'error': error.description})
-    response.status_code = 500
-    return response
+# @get_partitions_blueprint.errorhandler(500)
+# def internal_server_error(error):
+#     response = jsonify({'error': error.description})
+#     response.status_code = 500
+#     return response
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)

@@ -1,8 +1,8 @@
-from flask import Flask, jsonify
+from flask import Blueprint, Flask, jsonify
 from confluent_kafka import Consumer, TopicPartition
 import json
 
-app = Flask(__name__)
+get_latest_blueprint = Blueprint('get_latest_blueprint', __name__)
 
 def consume_messages_all(consumer_config, topic):
     try:
@@ -35,7 +35,7 @@ def consume_messages_all(consumer_config, topic):
         raise Exception("Failed to consume messages: {}".format(str(e)))
 
 
-@app.route('/get/<offset>/<topic>/<group_id>', methods=['GET'])
+@get_latest_blueprint.route('/get/<offset>/<topic>/<group_id>', methods=['GET'])
 def get_all_messages(offset, topic, group_id):
     # Validate offset
     offset = offset.lower()
@@ -64,5 +64,5 @@ def get_all_messages(offset, topic, group_id):
         return jsonify(error="Failed to retrieve messages: {}".format(str(e))), 500
 
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)
