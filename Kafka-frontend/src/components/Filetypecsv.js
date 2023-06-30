@@ -92,6 +92,7 @@ function Filetypecsv() {
             <li>All fields marked * are mandatory</li>
             <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
               Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+            <li>Topic name should be a unique name </li>
 
           </ul>
         </Card.Body>

@@ -3,7 +3,7 @@ import '../styles/Filetypecsv.css';
 import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, OpcuaURLconnectAlert } from '../Alerts/Alerts.js';
-
+import { Card } from 'react-bootstrap';
 let id = 0;
 function Opcuadata() {
     const [opcuaurl, setopcuaurl] = useState('');
@@ -82,6 +82,8 @@ function Opcuadata() {
     return (
         <Layoutnavbar>
             {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+            <Card className='instructions-container'>
+        <Card.Body>
             <h3>Instructions</h3>
             <br></br>
             <ul>
@@ -89,8 +91,11 @@ function Opcuadata() {
                 <li>OPC URL format must be opc.tcp://localhost:4840 </li>
                 <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
                     Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+                <li>Topic name should be a unique name </li>
                 <li>Node IDs must be separated by commas (example - ns=2;i=4,ns=2;i=3):</li>
             </ul>
+            </Card.Body>
+            </Card>
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="opcuaurl" className="form-group-custom">
                     <Form.Label>OPCUA URL *</Form.Label>

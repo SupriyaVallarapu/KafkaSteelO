@@ -3,7 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 //import { useNavigate } from 'react-router-dom';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert } from '../Alerts/Alerts.js';
-
+import { Card } from 'react-bootstrap';
 let id = 0;
 function Filetypeparquet() {
   const [dataDir, setDataDir] = useState('');
@@ -84,16 +84,22 @@ function Filetypeparquet() {
   return (
     <Layoutnavbar>
       {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+      <Card className='instructions-container'>
+        <Card.Body>
       <h3>Instructions</h3>
       <br></br>
       <ul>
         <li>All fields marked * are mandatory</li>
         <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
           Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+        <li>Topic name should be a unique name </li>
+        <li>Time column name should be a datetime2 column in your parquet file</li>
       </ul>
+      </Card.Body>
+      </Card>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId='dataDir'>
-          <Form.Label>Data Directory Path *</Form.Label>
+          <Form.Label>Directory Path *</Form.Label>
           < Form.Control type="text" required value={dataDir} placeholder="Enter directory folder path of Parquet files" onChange={(e) => setDataDir(e.target.value)}></Form.Control>
         </Form.Group>
         <Form.Group controlId='kafkaBroker'>
