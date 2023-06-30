@@ -74,4 +74,4 @@ The underlying Kafka deployment is a 3-node cluster. For POC, deployment can be 
 
 # USAGE
 - Run Python main.py in the backend and the OPCUA Data simulator if working with OPCUA Data, Other relational database Data simulator to stream data continuously
-- Go to Kafka-fronend and run npm start to start the application
+- Go to Kafka-frontend using *cd kafka-frontend* and use *npm start* command to start the application
