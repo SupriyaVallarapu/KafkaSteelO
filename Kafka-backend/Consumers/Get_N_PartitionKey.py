@@ -1,9 +1,9 @@
 import json
-from flask import Flask, Response, jsonify, request
+from flask import Blueprint, Flask, Response, jsonify, request
 from confluent_kafka import Consumer, TopicPartition
 from functools import wraps
 
-app = Flask(__name__)
+get_n_partitionkey_blueprint = Blueprint('get_n_partitionkey_blueprint', __name__)
 
 def handle_exceptions(func):
     @wraps(func)
@@ -134,8 +134,8 @@ def consume_messages_n(consumer, topic, n):
 
     return messages
 
-@app.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'], defaults={'partition_key': ''})
-@app.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'])
+@get_n_partitionkey_blueprint.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'])
+@get_n_partitionkey_blueprint.route('/get/<offset>/<topic>/<group_id>/<int:n>', methods=['GET'],defaults={'partition_key': ''})
 @handle_exceptions
 @validate_input
 def get_partition_and_messages(offset, topic, group_id, n):
@@ -161,5 +161,5 @@ def get_partition_and_messages(offset, topic, group_id, n):
 
     return jsonify(messages)
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)

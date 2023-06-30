@@ -12,7 +12,12 @@ from Producers.Kafka_Data_Connect_Producer import postgres_blueprint
 from Consumers.Get_All import get_all_messages_blueprint
 from Consumers.Get_By_Key_Value import get_by_key_value_blueprint
 from Consumers.Get_By_Name_And_Timestamps import get_by_name_and_timestamps_blueprint
-
+from Consumers.Get_By_Timestamps import get_by_timestamp_blueprint
+from Consumers.Get_Latest import get_latest_blueprint
+from Consumers.Get_N_PartitionKey import get_n_partitionkey_blueprint
+from Consumers.Get_PartitionId_From_PartitionKey import get_partitionid_from_partitionkey_blueprint
+from Consumers.Get_Partitions import get_partitions_blueprint
+from Consumers.Get_Payload import get_payload_blueprint
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000","http://localhost:8083"]}})
 
@@ -26,6 +31,12 @@ app.register_blueprint(postgres_blueprint)
 app.register_blueprint(get_all_messages_blueprint)
 app.register_blueprint(get_by_key_value_blueprint)
 app.register_blueprint(get_by_name_and_timestamps_blueprint)
+app.register_blueprint(get_by_timestamp_blueprint)
+app.register_blueprint(get_n_partitionkey_blueprint)
+app.register_blueprint(get_latest_blueprint)
+app.register_blueprint(get_partitionid_from_partitionkey_blueprint)
+app.register_blueprint(get_partitions_blueprint)
+app.register_blueprint(get_payload_blueprint)
 
 if __name__ == "__main__":
     app.run(port=8080)

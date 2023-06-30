@@ -1,9 +1,9 @@
-from flask import Flask, Response, jsonify
+from flask import Blueprint, Flask, Response, jsonify
 from confluent_kafka import Consumer, TopicPartition
 import json
 from datetime import datetime
 
-app = Flask(__name__)
+get_by_timestamp_blueprint = Blueprint('get_by_timestamp_blueprint', __name__)
 
 
 def consume_messages_all(consumer_config, topic):
@@ -45,7 +45,7 @@ def search_messages_by_time_range(messages, start_time, end_time):
     return found_messages
 
 
-@app.route('/get/time-range/<offset>/<topic>/<group_id>/<start_time>/<end_time>', methods=['GET'])
+@get_by_timestamp_blueprint.route('/get/time-range/<offset>/<topic>/<group_id>/<start_time>/<end_time>', methods=['GET'])
 def get_messages_by_time_range(offset, topic, group_id, start_time, end_time):
     try:
         start_time = datetime.fromisoformat(start_time)
@@ -73,5 +73,5 @@ def get_messages_by_time_range(offset, topic, group_id, start_time, end_time):
         return jsonify({'error': error_message}), 500
 
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)

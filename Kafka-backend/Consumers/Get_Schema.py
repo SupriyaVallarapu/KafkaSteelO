@@ -1,9 +1,8 @@
 import json
-from flask import Flask, Response
+from flask import Blueprint, Flask, Response
 from confluent_kafka import Consumer, KafkaException, TopicPartition
 
-app = Flask(__name__)
-
+get_schema_blueprint = Blueprint('get_schema_blueprint', __name__)
 def consume_latest_message(consumer_config, topic):
     consumer = Consumer(consumer_config)
 
@@ -43,7 +42,7 @@ def consume_latest_message(consumer_config, topic):
 
     return latest_message
 
-@app.route('/get/schema/<topic>/<group_id>', methods=['GET'])
+@get_schema_blueprint.route('/get/schema/<topic>/<group_id>', methods=['GET'])
 def get_latest_message_schema(topic, group_id):
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
@@ -59,5 +58,5 @@ def get_latest_message_schema(topic, group_id):
     else:
         return Response(status=404)
 
-if __name__ == '__main__':
-    app.run(port=3002)
+# if __name__ == '__main__':
+#     app.run(port=3002)
