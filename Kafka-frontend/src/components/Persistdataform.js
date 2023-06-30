@@ -3,6 +3,7 @@ import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Form, Button } from 'react-bootstrap';
 //import { useNavigate } from 'react-router-dom';
 //import { useLocation } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
 import {
     SuccessfulUploadAlert,
     FailedUploadAlert,
@@ -126,14 +127,22 @@ function Persistdataform() {
         <Layoutnavbar>
 
             {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+            <Card className='instructions-container'>
+                <Card.Body>
+                    <h3>Instructions</h3>
+                    <br></br>
+                    <ul>
+                        <li>All fields marked * are mandatory</li>
+                        <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
+                            Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+                        <li>Topic should be the name which is already created and has data in order to persist in database </li>
+                        <li>Schema should already be created in Database</li>
+                        <li>Create a consumer group if not created or choose a group if already present</li>
+                    </ul>
+
+                </Card.Body>
+            </Card>
             <Form onSubmit={handleSubmit}>
-                <h3>Instructions</h3>
-                <br></br>
-                <ul>
-                    <li>All fields marked * are mandatory</li>
-                    <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
-                        Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
-                </ul>
 
                 {/* {sourceType === 'csv' && (
                     <Form.Group controlId="directoryPath">
@@ -166,7 +175,7 @@ function Persistdataform() {
                 </Form.Group>
                 <Form.Group controlId="kafkaTopic">
                     <Form.Label>Kafka Topic Name *</Form.Label>
-                    <Form.Control type="text" required placeholder='Enter Kafka Topic name (No Spaces allowed)' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+                    <Form.Control type="text" required placeholder='Enter Kafka Topic name' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbname">
                     <Form.Label>DB Name *</Form.Label>
@@ -174,7 +183,7 @@ function Persistdataform() {
                 </Form.Group>
                 <Form.Group controlId="dbschema">
                     <Form.Label>DB Schema *</Form.Label>
-                    <Form.Control type="text" required placeholder='Enter your Database Schema Name (Schema should be created already)' value={dbschema} onChange={(e) => setdbschema(e.target.value)} />
+                    <Form.Control type="text" required placeholder='Enter your Database Schema Name' value={dbschema} onChange={(e) => setdbschema(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbuser">
                     <Form.Label>DB User *</Form.Label>
@@ -182,7 +191,7 @@ function Persistdataform() {
                 </Form.Group>
                 <Form.Group controlId="dbPassword">
                     <Form.Label>DB Password *</Form.Label>
-                    <Form.Control type="text" required value={dbpassword} placeholder='Enter your Databsae Password' onChange={(e) => setdbpassword(e.target.value)} />
+                    <Form.Control type="text" required value={dbpassword} placeholder='Enter your Database Password' onChange={(e) => setdbpassword(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="dbhost">
                     <Form.Label>DB Host *</Form.Label>

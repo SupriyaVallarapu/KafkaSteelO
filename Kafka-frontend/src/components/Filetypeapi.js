@@ -3,7 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 //import { useNavigate } from "react-router-dom";
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, URLAlert } from '../Alerts/Alerts.js';
-
+import { Card } from 'react-bootstrap';
 
 let id = 0;
 function Filetypeapi() {
@@ -79,13 +79,18 @@ function Filetypeapi() {
     <Layoutnavbar>
 
       {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+      <Card className='instructions-container'>
+        <Card.Body>
       <h3>Instructions</h3>
       <br></br>
       <ul>
         <li>All fields marked * are mandatory</li>
         <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
           Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+          <li>Topic name should be a unique name </li>
       </ul>
+      </Card.Body>
+      </Card>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="apiurl">
           <Form.Label>Api URL *</Form.Label>
