@@ -22,9 +22,14 @@ def start_process():
     if not os.path.isdir(data_dir):
         return jsonify({'error': f'Directory {data_dir} does not exist'}), 400
 
+    files = [f for f in os.listdir(data_dir) if f.endswith('.csv') and f not in processed_files]
+    if not files:
+        return jsonify({'error': f'No CSV files found in directory {data_dir}'}), 400
+
     try:
         producer = create_kafka_producer(kafka_broker)
     except KafkaException as e:
+        print(e)
         return jsonify({'error': f'Unable to connect to Kafka broker at {kafka_broker}. Error: {str(e)}'}), 500
 
     # Start a new thread that will collect and stream data

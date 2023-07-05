@@ -8,6 +8,7 @@ from flask import Blueprint, request, jsonify
 import json
 
 parquet_blueprint = Blueprint('parquet_blueprint', __name__)
+processed_files = set()
 
 @parquet_blueprint.route('/api/parquetupload', methods=['POST'])
 def start_process():
@@ -25,6 +26,10 @@ def start_process():
     if not os.path.isdir(data_dir):
         return jsonify({'error': f'Directory {data_dir} does not exist'}), 400
 
+    files = [f for f in os.listdir(data_dir) if f.endswith('.parquet') and f not in processed_files]
+    if not files:
+        return jsonify({'error': f'No CSV files found in directory {data_dir}'}), 400
+    
     try:
         producer = create_producer(kafka_broker)
     except KafkaException as e:

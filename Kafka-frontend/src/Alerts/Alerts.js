@@ -49,3 +49,7 @@ export function UnexpectedErrorAlert({ onClose }) {
 export function OpcuaURLconnectAlert({onClose}){
     return <Alert variant="warning" onClose={onClose} dismissible>Could not connect to URL </Alert>
 }
+
+export function CannotConnectToBrokerAlert({onClose}){
+    return <Alert variant='danger' onClose={onClose} dismissible>Unable to connect to Kafka broker</Alert>
+}

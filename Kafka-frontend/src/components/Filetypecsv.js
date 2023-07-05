@@ -3,7 +3,7 @@ import '../styles/Filetypecsv.css';
 import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Card } from 'react-bootstrap';
-import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert } from '../Alerts/Alerts.js';
+import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert ,CannotConnectToBrokerAlert} from '../Alerts/Alerts.js';
 
 let id = 0;
 function Filetypecsv() {
@@ -61,6 +61,10 @@ function Filetypecsv() {
         // check if errorResponse has json method
         if (errorResponse.json) {
           errorResponse.json().then(error => {
+            if (error.error.startsWith('Unable to connect to Kafka broker at')) {
+              addAlert(<CannotConnectToBrokerAlert />);
+            }
+            else{
             switch (error.error) {
               case `Directory ${dataDir} does not exist`:
                 addAlert(<DirectoryPathDoesntExistAlert />);
@@ -72,6 +76,7 @@ function Filetypecsv() {
                 addAlert(<FailedUploadAlert />);
                 break;
             }
+          }
           });
         } else {
           // In case of a network failure or other kind of request failure
