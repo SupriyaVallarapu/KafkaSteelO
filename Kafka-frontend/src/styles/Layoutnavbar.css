@@ -1,0 +1,15 @@
+.custom-dropdown-item {
+    padding: 3px 10px;
+    background-color: beige;
+    
+  }
+
+  .dropdown-menu-custom{
+    min-width: 10% !important;
+    
+  }
+
+  .dropdown-toggle-custom{
+    background-color:rgba(0, 0, 0, 0.135) !important;
+    border-color:rgba(0, 0, 0, 0.135) !important
+  }

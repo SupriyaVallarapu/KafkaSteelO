@@ -107,7 +107,7 @@ function Opcuadata() {
                 </Form.Group>
                 <Form.Group controlId="kafkaTopic" className="form-group-custom">
                     <Form.Label>Kafka Topic Name *</Form.Label>
-                    <Form.Control className="form-control-custom" required type="text" placeholder='Enter Kafka Topic name (No Spaces allowed)' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
+                    <Form.Control className="form-control-custom" required type="text" placeholder='Enter Kafka Topic name' value={kafkaTopic} onChange={(e) => setKafkaTopic(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="nodeids" className="form-group-custom">
                     <Form.Label>Node IDs *</Form.Label>

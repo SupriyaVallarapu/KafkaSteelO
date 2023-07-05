@@ -47,7 +47,7 @@ def get_latest_message_schema(topic, group_id):
     consumer_config = {
         'bootstrap.servers': 'localhost:9092',
         'group.id': group_id,
-        'auto.offset.reset': 'earliest',
+        'auto.offset.reset': 'latest',
         'enable.auto.commit': False
     }
 
