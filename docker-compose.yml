@@ -18,6 +18,13 @@ services:
   #     - kafka3
   #     - schema-registry
   #     - kafka-connect
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
 
   zoo1:
     image: confluentinc/cp-zookeeper:7.3.2
