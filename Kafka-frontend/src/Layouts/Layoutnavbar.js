@@ -12,9 +12,9 @@ const Layoutnavbar = ({ children }) => {
       <Navbar bg="dark" variant="dark" expand="sm"  className="d-flex justify-content-between" >
       <div>
           <Button variant="link" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <MenuIcon style={{ color: "white" }}/>
+            <MenuIcon style={{color: "white", marginBottom:".5vh"}}/>
           </Button>
-          <Navbar.Brand>KafkaSteelO</Navbar.Brand>
+          <Navbar.Brand>KafkaIO POC</Navbar.Brand>
         </div>
         <div>
           <Dropdown className='me-3'>
