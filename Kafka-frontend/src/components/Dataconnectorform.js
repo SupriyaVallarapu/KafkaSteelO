@@ -126,6 +126,7 @@ function Dataconnectorform() {
                             <li>Following configuration can be used for creating Oracle, MSSQL and PosgresSQL connectors</li>
                             <li>Incrementing column name to use to detect new rows is typically the ID column (Number) </li>
                             <li>Timestamp column name to detect new or modified rows is typically the Date Column (DATE2)</li>
+                            <li>Incrementing and Timestamp column should be not null </li>
                             <li>Configuration Name should be unique</li>
                             <li>Table name specification is <b>schemaname. tablename</b> for PostgresSQL, <b>tablename</b> for Oracle and MSSQL </li>
                             <li>Please see the example configuration for more clarification</li>

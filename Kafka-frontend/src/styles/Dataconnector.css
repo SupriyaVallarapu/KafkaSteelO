@@ -38,7 +38,7 @@ margin-top: 3%;
 
 .instructions-container {
     height: auto; /* it will expand based on the content inside */
-    width: 100%; /* it will take the full width of the parent container */
+    width: 97%; /* it will take the full width of the parent container */
     padding: 20px; /* padding inside the box */
     margin-top: 20px; /* margin from the top */
     background-color: rgba(224, 224, 224, 0.459); /* color of the box, you can also use #d3d3d3 for light grey */
