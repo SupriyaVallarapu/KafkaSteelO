@@ -84,6 +84,7 @@ function Filetypecsv() {
   return (
     <Layoutnavbar>
       {alerts.map(({ id, component }) => React.cloneElement(component, { key: id, onClose: () => removeAlert(id) }))}
+     
       <Card className='instructions-container'>
         <Card.Body>
           <h3>Instructions</h3>
