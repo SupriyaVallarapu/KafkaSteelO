@@ -1,6 +1,10 @@
 # Step 1: Specify the base image
 FROM python:3
 
+# RUN apt-get update
+
+# RUN apt-get install -y netcat
+
 # Step 2: Copy the application files
 COPY . /app
 
