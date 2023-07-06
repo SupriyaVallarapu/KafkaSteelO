@@ -2,37 +2,6 @@ version: '3'
 
 services:
 
-  frontend:
-    build:
-      context: ./Kafka-frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-
-  backend:
-    build:
-      context: ./Kafka-backend
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-
-  swagger-ui:
-    image: swaggerapi/swagger-ui
-    volumes:
-      - ./allApi.yaml:/foo/swagger.yaml
-    environment:
-      - SWAGGER_JSON=/foo/swagger.yaml
-    ports:
-      - "3004:8080"
-    networks:
-      - kafka-network
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-      - schema-registry
-      - kafka-connect
-
   db:
     image: postgres
     restart: always
@@ -125,6 +94,41 @@ services:
     networks:
       - kafka-network
   
+  backend:
+      build:
+        context: ./Kafka-backend
+        dockerfile: Dockerfile
+      ports:
+        - "8080:8080"
+      networks:
+        - kafka-network
+
+  frontend:
+    build:
+      context: ./Kafka-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - kafka-network
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./allApi.yaml:/foo/swagger.yaml
+    environment:
+      - SWAGGER_JSON=/foo/swagger.yaml
+    ports:
+      - "3004:3004"
+    networks:
+      - kafka-network
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - schema-registry
+      - kafka-connect
+
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.2
@@ -157,6 +161,7 @@ services:
       DYNAMIC_CONFIG_ENABLED: 'true'
     networks:
       - kafka-network
+
 
 networks:
   kafka-network:
