@@ -19,7 +19,7 @@ from Consumers.Get_PartitionId_From_PartitionKey import get_partitionid_from_par
 from Consumers.Get_Partitions import get_partitions_blueprint
 from Consumers.Get_Payload import get_payload_blueprint
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000","http://localhost:8083"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:8080", "http://localhost:3000","http://localhost:8083","http://localhost:3004"]}})
 
 app.register_blueprint(csv_blueprint)
 app.register_blueprint(api_blueprint)
