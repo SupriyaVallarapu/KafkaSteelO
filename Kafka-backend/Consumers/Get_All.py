@@ -16,7 +16,7 @@ def get_all_messages(offset, topic, group_id):
         return jsonify(error="Invalid topic or group ID"), 400
 
     consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
         'auto.offset.reset': offset,
         'enable.auto.commit': False

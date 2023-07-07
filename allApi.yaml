@@ -264,7 +264,7 @@ paths:
         - name: name
           in: path
           description: The name of the sensor (optional)
-          required: false
+          required: true
           schema:
             type: string
       responses:
