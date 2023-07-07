@@ -7,20 +7,35 @@ def consume_latest_message(consumer_config, topic):
     consumer = Consumer(consumer_config)
 
     try:
-        # Get the last partition for the topic
+        # Get the partitions for the topic
         partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-        last_partition = max(partitions)
-        consumer.assign([TopicPartition(topic, last_partition)])
+        num_partitions = len(partitions)
 
-        # Get the last offset in the partition
-        end_offset = consumer.get_watermark_offsets(TopicPartition(topic, last_partition))[1]
-        last_offset = end_offset - 1
+        if num_partitions == 1:
+            # If there is only one partition, take the last offset of that partition
+            partition = partitions[0]
+            consumer.assign([TopicPartition(topic, partition)])
+
+            end_offset = consumer.get_watermark_offsets(TopicPartition(topic, partition))[1]
+            last_offset = end_offset - 1
+
+        elif num_partitions > 1:
+            # If there are multiple partitions, follow the existing logic to find the last offset
+            last_partition = max(partitions)
+            consumer.assign([TopicPartition(topic, last_partition)])
+
+            end_offset = consumer.get_watermark_offsets(TopicPartition(topic, last_partition))[1]
+            last_offset = end_offset - 1
+
+        else:
+            # Handle the case where there are no partitions
+            return None
 
         latest_message = None
 
         if last_offset >= 0:
             # Seek to the last offset and fetch the message
-            consumer.seek(TopicPartition(topic, last_partition, last_offset))
+            consumer.seek(TopicPartition(topic, partition, last_offset))
             msg = consumer.poll(5.0)
 
             if msg is not None and not msg.error():
@@ -42,12 +57,13 @@ def consume_latest_message(consumer_config, topic):
 
     return latest_message
 
+
 @get_schema_blueprint.route('/get/schema/<topic>/<group_id>', methods=['GET'])
 def get_latest_message_schema(topic, group_id):
     consumer_config = {
         'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
-        'auto.offset.reset': 'latest',
+        'auto.offset.reset': 'earliest',
         'enable.auto.commit': False
     }
 
