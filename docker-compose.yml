@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - 5432:5432
+    networks:
+      - kafka-network
 
   zoo1:
     image: confluentinc/cp-zookeeper:7.3.2
