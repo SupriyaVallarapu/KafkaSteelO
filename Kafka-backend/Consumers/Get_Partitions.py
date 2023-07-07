@@ -49,7 +49,7 @@ def get_partition_messages(partition_nums, offset, topic, group_id):
         abort(400, 'Invalid offset.')
 
     consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
         'auto.offset.reset': offset,
         'enable.auto.commit': False

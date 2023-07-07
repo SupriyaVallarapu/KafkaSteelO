@@ -63,7 +63,7 @@ def search_messages_by_key_value(messages, key, value):
 def get_messages_by_key_value(offset, topic, group_id, key, value):
     try:
         consumer_config = {
-            'bootstrap.servers': 'localhost:9092',
+            'bootstrap.servers': 'kafka1:19092',
             'group.id': group_id,
             'auto.offset.reset': offset,
             'enable.auto.commit': False

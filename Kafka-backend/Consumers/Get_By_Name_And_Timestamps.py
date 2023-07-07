@@ -68,7 +68,7 @@ def get_messages_by_time_range(offset, topic, group_id, start_time, end_time, na
         end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%f')
 
         consumer_config = {
-            'bootstrap.servers': 'localhost:9092',
+            'bootstrap.servers': 'kafka1:19092',
             'group.id': group_id,
             'auto.offset.reset': offset,
             'enable.auto.commit': False

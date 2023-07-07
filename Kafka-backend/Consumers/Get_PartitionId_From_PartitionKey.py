@@ -37,7 +37,7 @@ def get_partition_id_endpoint(topic, partition_key, group_id):
         abort(400, 'Missing required parameters.')
 
     consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
         'auto.offset.reset': 'earliest',
         'enable.auto.commit': False
