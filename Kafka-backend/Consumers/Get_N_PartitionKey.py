@@ -142,7 +142,7 @@ def get_partition_and_messages(offset, topic, group_id, n, partition_key):
     partition_key = request.args.get('partition_key')
 
     consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
         'auto.offset.reset': offset,
         'enable.auto.commit': False

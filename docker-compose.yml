@@ -97,13 +97,16 @@ services:
       - kafka-network
   
   backend:
-      build:
-        context: ./Kafka-backend
-        dockerfile: Dockerfile
-      ports:
-        - "8080:8080"
-      networks:
-        - kafka-network
+    build:
+      context: ./Kafka-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - kafka-network
+    volumes:
+      - C:/Users/VASU03/Downloads/testingfiles:/app/data
+
 
   frontend:
     build:

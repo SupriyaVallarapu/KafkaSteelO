@@ -42,7 +42,7 @@ def get_all_messages(offset, topic, group_id):
         abort(400, 'Invalid offset.')
 
     consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
         'auto.offset.reset': offset,
         'enable.auto.commit': False
