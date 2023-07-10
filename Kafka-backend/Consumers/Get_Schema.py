@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, Response, jsonify
+from flask import Blueprint, Response, jsonify
 from confluent_kafka import Consumer, KafkaException, TopicPartition
 import json
 from werkzeug.exceptions import BadRequest
@@ -54,8 +54,9 @@ def get_latest_message_schema(topic, group_id):
     try:
         latest_message_schema = consume_latest_message(consumer_config, topic)
         if latest_message_schema:
-            json_data = json.dumps(latest_message_schema)
-            return Response(json_data, mimetype='application/json')
+            fields = latest_message_schema['fields']
+            reduced_schema = [{'field': field['field'], 'type': field['type']} for field in fields]
+            return jsonify(reduced_schema)
         else:
             return Response(status=404)
 
