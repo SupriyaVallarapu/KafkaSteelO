@@ -67,6 +67,8 @@
 # #     app.run(port=3002)
 
 
+
+
 import json
 from flask import Blueprint, Flask, Response, abort
 from confluent_kafka import Consumer, TopicPartition

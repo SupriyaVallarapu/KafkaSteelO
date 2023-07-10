@@ -164,6 +164,8 @@ get_n_partitionkey_blueprint = Blueprint('get_n_partitionkey_blueprint', __name_
 # # if __name__ == '__main__':
 # #     app.run(port=3002)
 
+
+
 def consume_messages_partition(consumer_config, topic, partition_id, partition_key, n):
     consumer = Consumer(consumer_config)
     consumer.assign([TopicPartition(topic, partition_id)])
