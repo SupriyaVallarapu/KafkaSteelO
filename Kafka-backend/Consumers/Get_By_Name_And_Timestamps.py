@@ -11,12 +11,18 @@ def consume_messages_all(consumer_config, topic):
     consumer = Consumer(consumer_config)
     messages = []
 
-    partitions = consumer.list_topics(topic).topics
     topics = consumer.list_topics().topics
     if topic not in topics:
-            raise Exception("Topic {} does not exist".format(topic))
+        raise Exception("Topic {} does not exist".format(topic))
 
-    partitions = partitions[topic].partitions.keys()
+    partitions = consumer.list_topics(topic).topics.get(topic)
+
+    if partitions is None:
+        # Handle case when there are no partitions
+        partitions = []
+    else:
+        partitions = partitions.partitions.keys()
+
     consumer.assign([TopicPartition(topic, partition) for partition in partitions])
 
     try:
@@ -37,6 +43,7 @@ def consume_messages_all(consumer_config, topic):
         consumer.close()
 
     return messages
+
 
 
 def search_messages_by_time_range(messages, start_time, end_time):

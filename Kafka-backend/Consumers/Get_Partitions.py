@@ -8,6 +8,9 @@ def consume_messages_partitions(consumer_config, topic, partition_nums):
     consumer = Consumer(consumer_config)
     partitions = consumer.list_topics(topic).topics[topic].partitions
 
+    if len(partitions) == 0:
+        return 0
+    
     partition_ids = []
     for partition_num in partition_nums:
         if not partition_num.isdigit():
@@ -61,23 +64,25 @@ def get_partition_messages(partition_nums, offset, topic, group_id):
     except Exception as e:
         abort(500, 'An error occurred while consuming messages.')
 
-# @get_partitions_blueprint.errorhandler(400)
-# def bad_request(error):
-#     response = jsonify({'error': error.description})
-#     response.status_code = 400
-#     return response
+# Uncomment the error handler functions if needed
 
-# @get_partitions_blueprint.errorhandler(404)
-# def not_found(error):
-#     response = jsonify({'error': error.description})
-#     response.status_code = 404
-#     return response
+@get_partitions_blueprint.errorhandler(400)
+def bad_request(error):
+    response = jsonify({'error': error.description})
+    response.status_code = 400
+    return response
 
-# @get_partitions_blueprint.errorhandler(500)
-# def internal_server_error(error):
-#     response = jsonify({'error': error.description})
-#     response.status_code = 500
-#     return response
+@get_partitions_blueprint.errorhandler(404)
+def not_found(error):
+    response = jsonify({'error': error.description})
+    response.status_code = 404
+    return response
+
+@get_partitions_blueprint.errorhandler(500)
+def internal_server_error(error):
+    response = jsonify({'error': error.description})
+    response.status_code = 500
+    return response
 
 # if __name__ == '__main__':
 #     app.run(port=3002)
