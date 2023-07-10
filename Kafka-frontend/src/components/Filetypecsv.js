@@ -4,7 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Card } from 'react-bootstrap';
 import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert } from '../Alerts/Alerts.js';
-import { HOST_PORT } from '../../ENV_VAR';
+//import { HOST_PORT } from '../../ENV_VAR';
 
 let id = 0;
 function Filetypecsv() {
@@ -41,7 +41,7 @@ function Filetypecsv() {
       kafka_topic: kafkaTopic
     };
 
-    fetch(`HOST_PORT/csvupload`, {
+    fetch('http://localhost:8080/api/csvupload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
