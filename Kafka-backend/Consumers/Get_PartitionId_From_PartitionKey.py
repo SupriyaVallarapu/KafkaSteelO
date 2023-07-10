@@ -5,6 +5,7 @@
 
 # get_partitionid_from_partitionkey_blueprint = Blueprint('get_partitionid_from_partitionkey_blueprint', __name__)
 
+
 # def get_partition_id(consumer_config, topic, partition_key):
 #     try:
 #         # Create a consumer to get partition information
@@ -68,30 +69,36 @@
 
 
 
-
 import json
 from flask import Blueprint, Flask, Response, abort
-from confluent_kafka import Consumer, TopicPartition
+from confluent_kafka import Consumer, KafkaException, TopicPartition
 
 get_partitionid_from_partitionkey_blueprint = Blueprint('get_partitionid_from_partitionkey_blueprint', __name__)
 
 def get_partition_id(consumer_config, topic, partition_key):
-    # Create a consumer to get partition information
-    consumer = Consumer(consumer_config)
-    partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-    consumer.assign([TopicPartition(topic, partition) for partition in partitions])
+    try:
+        # Create a consumer to get partition information
+        consumer = Consumer(consumer_config)
+        partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
+        consumer.assign([TopicPartition(topic, partition) for partition in partitions])
 
-    while True:
-        msg = consumer.poll(1.0)
-        if msg is None:
-            continue
-        if msg.error():
-            print("Error: {}".format(msg.error()))
-            continue
+        while True:
+            msg = consumer.poll(1.0)
+            if msg is None:
+                continue
+            if msg.error():
+                print("Error: {}".format(msg.error()))
+                continue
 
-        if msg.key() == partition_key.encode('utf-8'):
-            consumer.close()
-            yield 'data: %s\n\n' % json.dumps(msg.partition())
+            if msg.key() == partition_key.encode('utf-8'):
+                return msg.partition()
+
+        consumer.close()
+
+    except KafkaException as e:
+        print(f"Error while getting partition information: {str(e)}")
+
+    return None
 
 @get_partitionid_from_partitionkey_blueprint.route('/get_partition_id/<topic>/<partition_key>/<group_id>', methods=['GET'])
 def get_partition_id_endpoint(topic, partition_key, group_id):
@@ -106,7 +113,10 @@ def get_partition_id_endpoint(topic, partition_key, group_id):
         'enable.auto.commit': False
     }
 
-    return Response(get_partition_id(consumer_config, topic, partition_key), mimetype='text/event-stream')
+    partition_id = get_partition_id(consumer_config, topic, partition_key)
 
-# if __name__ == '__main__':
-#     app.run(port=3002)
+    if partition_id is None:
+        abort(404, 'Partition not found.')
+
+    json_data = json.dumps(partition_id)
+    return Response(json_data, mimetype='application/json')

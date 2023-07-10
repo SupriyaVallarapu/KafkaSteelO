@@ -3,6 +3,7 @@ from flask import Blueprint, Flask, Response, jsonify, request
 from confluent_kafka import Consumer, TopicPartition
 from functools import wraps
 
+
 get_n_partitionkey_blueprint = Blueprint('get_n_partitionkey_blueprint', __name__)
 
 # def handle_exceptions(func):
