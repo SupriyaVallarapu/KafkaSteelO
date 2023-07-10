@@ -21,9 +21,12 @@ function Dataconnectorform() {
     "key.converter.schemas.enable": "false",
     "topic.prefix": "oracle.kafka.oracldata.",
     "value.converter.schemas.enable": "false",
-    For Oracle - "connection.url": "jdbc:oracle:thin:@//10.172.251.67:1521/L3PROD" or
-    For Postgres (within docker) - "connection.url": "jdbc:postgresql://kafkasteelo-db-1:5432/postgres", or
-    For MSSQL - "connection.url": "jdbc:sqlserver://10.172.251.2:1433;databaseName=BRSDB", or
+     For Oracle - 
+    "connection.url": "jdbc:oracle:thin:@//10.172.251.67:1521/L3PROD" or
+     For Postgres (within docker) - 
+    "connection.url": "jdbc:postgresql://kafkasteelo-db-1:5432/postgres", or
+     For MSSQL - 
+    "connection.url": "jdbc:sqlserver://10.172.251.2:1433;databaseName=BRSDB",
     "table.whitelist": "CODES,DELAYS"
     }`;
 

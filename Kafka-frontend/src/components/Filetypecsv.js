@@ -92,7 +92,7 @@ function Filetypecsv() {
           <br></br>
           <ul>
             <li>All fields marked * are mandatory</li>
-            <li>Kafka Broker: example: localhost:9092 or when using docker - Kafka1: 19092 ( containername: docker internal port number )</li>
+            <li>Kafka Broker: example: localhost:9092 or when using docker - example - Kafka1: 19092 ( containername: docker internal port number )</li>
             <li>Directory path is the mapped folder path of docker container (/app/data) or local folder if not deployed</li>
             <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
               Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
@@ -108,7 +108,7 @@ function Filetypecsv() {
         </Form.Group>
         <Form.Group controlId="kafkaBroker" className="form-group-custom">
           <Form.Label>Kafka Broker *</Form.Label>
-          <Form.Control className="form-control-custom" required type="text" placeholder="Enter Kafka Broker:" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
+          <Form.Control className="form-control-custom" required type="text" placeholder="Enter Kafka Broker" value={kafkaBroker} onChange={(e) => setKafkaBroker(e.target.value)} />
         </Form.Group>
         <Form.Group controlId="kafkaTopic" className="form-group-custom">
           <Form.Label>Kafka Topic Name *</Form.Label>

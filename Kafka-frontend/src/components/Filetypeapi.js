@@ -94,17 +94,17 @@ function Filetypeapi() {
       </Card>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="apiurl">
-          <Form.Label>Api URL *</Form.Label>
+          <Form.Label>API URL *</Form.Label>
           <Form.Control type="text" required value={apiurl} placeholder="Enter a valid  API URL" onChange={(e) => setapiurl(e.target.value)} />
         </Form.Group>
 
         <Form.Group controlId="kafkaBroker">
           <Form.Label>Kafka Broker *</Form.Label>
-          <Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker: example" onChange={(e) => setKafkaBroker(e.target.value)} />
+          <Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker" onChange={(e) => setKafkaBroker(e.target.value)} />
         </Form.Group>
         <Form.Group controlId="kafkaTopic">
           <Form.Label>Kafka Topic Name *</Form.Label>
-          <Form.Control type="text" required value={kafkaTopic} placeholder='Enter Kafka Topic (No Spaces allowed)' onChange={(e) => setKafkaTopic(e.target.value)} />
+          <Form.Control type="text" required value={kafkaTopic} placeholder='Enter Kafka Topic' onChange={(e) => setKafkaTopic(e.target.value)} />
         </Form.Group>
         <Button variant="primary" type="submit">
           Publish

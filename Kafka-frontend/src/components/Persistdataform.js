@@ -133,7 +133,7 @@ function Persistdataform() {
                     <br></br>
                     <ul>
                         <li>All fields marked * are mandatory</li>
-                        <li>Kafka Broker: example: localhost:9092 or when using docker - Kafka1: 19092 ( containername: docker internal port number )</li>
+                        <li>Kafka Broker: example: localhost:9092 or when using docker - example - Kafka1: 19092 ( containername: docker internal port number )</li>
                         <li>Topic should be the name which is already created and has data in order to persist in database </li>
                         <li>Data Host is ConTainer name when Database is deployed in container else host Address</li>
                         <li>Schema should already be created in Database</li>
