@@ -1,6 +1,8 @@
+from flask import Response
+import json
 import json
 from flask import Blueprint, Flask, Response
-from confluent_kafka import Consumer, KafkaException, TopicPartition
+from confluent_kafka import Consumer, TopicPartition, KafkaException
 
 get_schema_blueprint = Blueprint('get_schema_blueprint', __name__)
 
@@ -75,13 +77,10 @@ get_schema_blueprint = Blueprint('get_schema_blueprint', __name__)
 #     else:
 #         return Response(status=404)
 
-from flask import Response
-from kafka import KafkaConsumer, TopicPartition, KafkaException
-import json
 
 
 def consume_latest_message(consumer_config, topic):
-    consumer = KafkaConsumer(**consumer_config)
+    consumer = Consumer(**consumer_config)
 
     try:
         partitions = consumer.partitions_for_topic(topic)
