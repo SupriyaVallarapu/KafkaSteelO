@@ -75,31 +75,43 @@ get_schema_blueprint = Blueprint('get_schema_blueprint', __name__)
 #     else:
 #         return Response(status=404)
 
+from flask import Response
+from kafka import KafkaConsumer, TopicPartition, KafkaException
+import json
 
-def consume_messages(consumer_config, topic):
-    consumer = Consumer(consumer_config)
+
+def consume_latest_message(consumer_config, topic):
+    consumer = KafkaConsumer(**consumer_config)
 
     try:
-        # Assign all partitions of the topic to the consumer
-        partitions = consumer.list_topics(topic).topics[topic].partitions.keys()
-        consumer.assign([TopicPartition(topic, p) for p in partitions])
+        partitions = consumer.partitions_for_topic(topic)
+        if partitions is None:
+            return
 
-        while True:
-            msg = consumer.poll(1.0)
-            if msg is None:
+        topic_partitions = [TopicPartition(topic, p) for p in partitions]
+        consumer.assign(topic_partitions)
+
+        watermark_offsets = consumer.end_offsets(topic_partitions)
+
+        last_offset = -1
+        for partition, offset in watermark_offsets.items():
+            if offset > 0:
+                last_offset = offset - 1
                 break
-            if msg.error():
-                print(f"Kafka Error: {msg.error()}")
-                continue
 
-            # Decode message and extract schema
+        if last_offset >= 0:
+            for partition, offset in watermark_offsets.items():
+                if offset > last_offset:
+                    consumer.seek(partition, last_offset)
+
+            msg = next(consumer)
             message = msg.value().decode('utf-8')
             fields = json.loads(message)['schema']['fields']
             extracted_fields = [{'type': field['type'], 'field': field['field']} for field in fields]
-            
-            # Yield schema of the current message
             yield f'data: {json.dumps(extracted_fields)}\n\n'
 
+    except StopIteration:
+        pass
     except KafkaException as ke:
         print(f"KafkaException: {ke}")
     except Exception as e:
@@ -109,15 +121,16 @@ def consume_messages(consumer_config, topic):
 
 
 @get_schema_blueprint.route('/get/schema/<topic>/<group_id>', methods=['GET'])
-def get_messages_schema(topic, group_id):
+def get_latest_message_schema(topic, group_id):
     consumer_config = {
-        'bootstrap.servers': 'kafka1:19092',
-        'group.id': group_id,
-        'auto.offset.reset': 'earliest',
-        'enable.auto.commit': False
+        'bootstrap_servers': 'kafka1:19092',
+        'group_id': group_id,
+        'auto_offset_reset': 'earliest',
+        'enable_auto_commit': False
     }
 
-    try:
-        return Response(consume_messages(consumer_config, topic), mimetype='text/event-stream')
-    except Exception as e:
-        return {"error": str(e)}, 500
+    def generate():
+        for extracted_fields in consume_latest_message(consumer_config, topic):
+            yield extracted_fields
+
+    return Response(generate(), mimetype='text/event-stream')
