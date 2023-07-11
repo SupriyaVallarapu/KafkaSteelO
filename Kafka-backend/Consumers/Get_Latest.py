@@ -119,7 +119,7 @@ def get_all_messages(offset, topic, group_id):
                 else:
                     no_message_count = 0
                     message = msg.value().decode('utf-8')
-                    yield 'data: %s\n\n' % json.dumps(message)
+                    yield 'data: %s\n\n' % json.loads(message)
         
         return Response(generate(), mimetype='text/event-stream')
 
