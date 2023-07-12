@@ -81,6 +81,7 @@ function Filetypecsv() {
           });
         } else {
           // In case of a network failure or other kind of request failure
+          
           console.error('An error occurred:', errorResponse);
           addAlert(<FailedUploadAlert />);
         }

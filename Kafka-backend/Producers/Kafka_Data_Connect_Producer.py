@@ -5,14 +5,14 @@ from flask import request, jsonify, Blueprint
 import requests
 import logging
 
-postgres_blueprint=Blueprint("postgres_blueprint",__name__)
+RDBMSconnector_blueprint=Blueprint("RDBMSconnector_blueprint",__name__)
 
 CONNECTOR_CLASS = "io.confluent.connect.jdbc.JdbcSourceConnector"
 VALIDATE_NON_NULL = "false"
 VALUE_CONVERTER = "org.apache.kafka.connect.json.JsonConverter"
 KEY_CONVERTER = "org.apache.kafka.connect.json.JsonConverter"
 print("abc1")
-@postgres_blueprint.route('/api/dataconnector', methods=['POST'])
+@RDBMSconnector_blueprint.route('/api/dataconnector', methods=['POST'])
 def process_json():
     print("abc")
     logging.info(request.json)
