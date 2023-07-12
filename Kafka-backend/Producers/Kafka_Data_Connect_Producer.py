@@ -11,9 +11,10 @@ CONNECTOR_CLASS = "io.confluent.connect.jdbc.JdbcSourceConnector"
 VALIDATE_NON_NULL = "false"
 VALUE_CONVERTER = "org.apache.kafka.connect.json.JsonConverter"
 KEY_CONVERTER = "org.apache.kafka.connect.json.JsonConverter"
-
+print("abc1")
 @postgres_blueprint.route('/api/dataconnector', methods=['POST'])
 def process_json():
+    print("abc")
     logging.info(request.json)
     try:
         # Get the JSON from the request
@@ -69,7 +70,7 @@ def process_json():
             response_data['config']['timestamp.column.name'] = timestamp_column_name
 
         print(f"Sending data to Kafka Connect: {response_data}")
-        kafka_connect_response = requests.post('http://localhost:8083/connectors', json=response_data)
+        kafka_connect_response = requests.post('http://kafkasteelo-kafka-connect-1:8083/connectors', json=response_data)
         print(f"Kafka Connect response: {kafka_connect_response.status_code}, {kafka_connect_response.text}")
         if kafka_connect_response.status_code != 201:
             return jsonify(

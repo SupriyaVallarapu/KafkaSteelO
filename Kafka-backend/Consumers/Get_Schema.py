@@ -25,7 +25,7 @@ def consume_latest_message(consumer_config, topic):
 
         # Fetch the last message
         consumer.seek(TopicPartition(topic, last_partition, end_offset - 1))
-        msg = consumer.poll(5.0)
+        msg = consumer.poll(10.0)
 
         if msg is not None and not msg.error():
             message = msg.value().decode('utf-8')
@@ -45,7 +45,7 @@ def consume_latest_message(consumer_config, topic):
 @get_schema_blueprint.route('/get/schema/<topic>/<group_id>', methods=['GET'])
 def get_latest_message_schema(topic, group_id):
     consumer_config = {
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'kafka1:19092',
         'group.id': group_id,
         'auto.offset.reset': 'earliest',
         'enable.auto.commit': False

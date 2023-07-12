@@ -3,3 +3,7 @@ Flask-Cors==3.0.10
 pandas==2.0.2
 confluent-kafka==2.1.1
 psycopg2==2.9.6
+requests==2.26.0
+opcua
+pyarrow
+fastparquet

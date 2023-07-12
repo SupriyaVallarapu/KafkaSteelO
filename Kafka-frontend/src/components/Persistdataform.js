@@ -133,9 +133,9 @@ function Persistdataform() {
                     <br></br>
                     <ul>
                         <li>All fields marked * are mandatory</li>
-                        <li>Valid characters for Kafka topics are the ASCII Alphanumeric characters, ‘.’, ‘_’, and ‘-‘. No spaces allowed. <br></br>
-                            Period (‘.’) or underscore (‘_’) could collide. To avoid issues it is best to use either, but not both.</li>
+                        <li>Kafka Broker: example: localhost:9092 or when using docker - example - Kafka1: 19092 ( containername: docker internal port number )</li>
                         <li>Topic should be the name which is already created and has data in order to persist in database </li>
+                        <li>Data Host is ConTainer name when Database is deployed in container else host Address</li>
                         <li>Schema should already be created in Database</li>
                         <li>Create a consumer group if not created or choose a group if already present</li>
                     </ul>
@@ -171,7 +171,7 @@ function Persistdataform() {
                 )} */}
                 <Form.Group controlId="kafkaBroker">
                     <Form.Label>Kafka Broker *</Form.Label>
-                    <Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker: example: localhost:9092" onChange={(e) => setKafkaBroker(e.target.value)} />
+                    <Form.Control type="text" required value={kafkaBroker} placeholder="Enter Kafka Broker" onChange={(e) => setKafkaBroker(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="kafkaTopic">
                     <Form.Label>Kafka Topic Name *</Form.Label>

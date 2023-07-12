@@ -3,8 +3,8 @@
     overflow-y: auto; /* Enable scrolling if the sidenav has too much content */
     padding: 1em;
     text-decoration: none;
-    font-family: 'Times New Roman';
-    font-size: larger;
+    font-size:medium;
+    font-weight: 500;
     padding: 1%;
   }
 
@@ -27,8 +27,7 @@
     margin-top: 1em;
     align-items: flex-start;
     margin-bottom: 1em;
-    font-family: 'Times New Roman';
-    font-size: larger;
+    font-size: 10%px;
     margin-left: 1px;
   }
   

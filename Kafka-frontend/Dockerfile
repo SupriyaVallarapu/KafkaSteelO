@@ -21,5 +21,7 @@ RUN npm install -g serve
 
 RUN apt-get update && apt-get install -y xsel
 
+EXPOSE 3000
+
 # Set the command to start the server
 CMD ["serve", "-s", "build", "-l", "3000"]

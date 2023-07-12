@@ -14,7 +14,7 @@ processed_files = set()
 def start_process():
     data = request.get_json()
 
-    data_dir = data.get('data_dir')
+    data_dir = request.args.get('data_dir', '/app/data')
     kafka_broker = data.get('kafka_broker')
     kafka_topic = data.get('kafka_topic')
 

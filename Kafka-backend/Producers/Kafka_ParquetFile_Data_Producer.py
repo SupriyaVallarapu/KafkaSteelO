@@ -18,7 +18,7 @@ def start_process():
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields in request data'}), 400
 
-    data_dir = data['data_dir']
+    data_dir = request.args.get('data_dir', '/app/data')
     kafka_broker = data['kafka_broker']
     kafka_topic = data['kafka_topic']
     time_column_name = data['time_column_name']

@@ -12,7 +12,7 @@ function Dataconnectorform() {
 
     const jsonConfig =
 
-        `{
+    `{
     "connection.user": "username",
     "connection.password": "password",
     "name": "oracle_jdbc",
@@ -21,7 +21,12 @@ function Dataconnectorform() {
     "key.converter.schemas.enable": "false",
     "topic.prefix": "oracle.kafka.oracldata.",
     "value.converter.schemas.enable": "false",
-    "connection.url": "jdbc:oracle:thin:@//10.172.251.67:1521/L3PROD",
+     For Oracle - 
+    "connection.url": "jdbc:oracle:thin:@//10.172.251.67:1521/L3PROD" or
+     For Postgres (within docker) - 
+    "connection.url": "jdbc:postgresql://kafkasteelo-db-1:5432/postgres", or
+     For MSSQL - 
+    "connection.url": "jdbc:sqlserver://10.172.251.2:1433;databaseName=BRSDB",
     "table.whitelist": "CODES,DELAYS"
     }`;
 
@@ -126,8 +131,13 @@ function Dataconnectorform() {
                             <li>Following configuration can be used for creating Oracle, MSSQL and PosgresSQL connectors</li>
                             <li>Incrementing column name to use to detect new rows is typically the ID column (Number) </li>
                             <li>Timestamp column name to detect new or modified rows is typically the Date Column (DATE2)</li>
+<<<<<<< HEAD
                             <li>Incrementing and Timestamp column should be not null </li>
                             <li>Configuration Name should be unique</li>
+=======
+                            <li>Configuration Name should be unique and without spaces</li>
+                            <li>When using Docker, User Containername as Host address in JDBC URL if Database deployed in docker else use IP host address </li>
+>>>>>>> isha
                             <li>Table name specification is <b>schemaname. tablename</b> for PostgresSQL, <b>tablename</b> for Oracle and MSSQL </li>
                             <li>Please see the example configuration for more clarification</li>
                         </ul>
@@ -170,8 +180,6 @@ function Dataconnectorform() {
                             <Form.Control className="form-control-custom" placeholder='Enter the timestamp column name' type="text" value={timestampColumnName} onChange={(e) => setTimestampColumnName(e.target.value)} />
                         </Form.Group>
                     )}
-
-
                     <Form.Group controlId="Key Converter Schemas Enable" className="form-group-custom">
                         <Form.Label>Key Converter Schemas Enable *</Form.Label>
                         <Form.Control className="form-control-custom" required type="text" placeholder='Enable schema for key converter? (true/false)' value={keyconverterschemasenable} onChange={(e) => setkeyconverterschemasenableKafkaTopic(e.target.value)} />

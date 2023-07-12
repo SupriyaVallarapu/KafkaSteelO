@@ -14,9 +14,9 @@
 }
 
 .dataconnectorform-textbox-container {
-    width: 35%;
-    height: 80%;
-margin-top: 3%;
+    width: 45%;
+    height: 90%;
+    margin-top: 3%;
     padding: 0 2rem;
     font-weight: bold;
 
@@ -29,8 +29,8 @@ margin-top: 3%;
 }
 
 .dataconnectorform-textbox {
-    height: 58%;
-    font-size: 13px;
+    height: 90%;
+    font-size: 14px;
     padding: 0;
     
 }
