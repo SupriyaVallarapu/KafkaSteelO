@@ -3,7 +3,7 @@ import '../styles/Filetypecsv.css';
 import { Form, Button } from 'react-bootstrap';
 import Layoutnavbar from '../Layouts/Layoutnavbar';
 import { Card } from 'react-bootstrap';
-import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert } from '../Alerts/Alerts.js';
+import { SuccessfulUploadAlert, FailedUploadAlert, EmptyFieldAlert, DirectoryPathDoesntExistAlert, NoFilesInPathAlert,CannotConnectToBrokerAlert } from '../Alerts/Alerts.js';
 //import { HOST_PORT } from '../../ENV_VAR';
 
 let id = 0;
